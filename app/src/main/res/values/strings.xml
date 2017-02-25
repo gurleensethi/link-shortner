@@ -5,4 +5,5 @@
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="shorten_link_without_account">Shorten Link Without Account</string>
     <string name="this_is_not_an_official_google_app">This is not an official Google App</string>
+    <string name="your_original_url_here">Your original URL here</string>
 </resources>
