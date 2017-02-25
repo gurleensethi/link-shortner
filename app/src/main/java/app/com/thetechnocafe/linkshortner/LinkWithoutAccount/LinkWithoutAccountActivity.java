@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import app.com.thetechnocafe.linkshortner.R;
 import butterknife.BindView;
@@ -15,6 +17,10 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.link_edit_text)
+    EditText mLinkEditText;
+    @BindView(R.id.shorten_link_image_button)
+    ImageButton mShortenLinkImageButton;
 
     private LinkWithoutAccountContract.Presenter mPresenter;
 
@@ -47,6 +53,11 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        mShortenLinkImageButton.setOnClickListener(view -> {
+            String longLink = mLinkEditText.getText().toString();
+            mPresenter.shortenLink(longLink);
+        });
     }
 
     @Override

@@ -12,6 +12,6 @@ public class LinkWithoutAccountContract {
     }
 
     public interface Presenter extends BaseMVP.Presenter<LinkWithoutAccountContract.View> {
-
+        void shortenLink(String longUrl);
     }
 }

@@ -38,6 +38,7 @@
             android:padding="16dp">
 
             <EditText
+                android:id="@+id/link_edit_text"
                 style="@style/LinkEditTextStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -45,6 +46,7 @@
                 android:hint="@string/your_original_url_here" />
 
             <ImageButton
+                android:id="@+id/shorten_link_image_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.1"

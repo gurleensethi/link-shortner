@@ -31,6 +31,7 @@ public class NetworkService {
         return mInstance;
     }
 
+    //Return the Link Shortener API
     public GoogleLinkShortenerAPI getLinkShortenerAPI() {
         return mRetrofit.create(GoogleLinkShortenerAPI.class);
     }
