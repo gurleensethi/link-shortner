@@ -8,7 +8,9 @@ import app.com.thetechnocafe.linkshortner.BaseMVP;
 
 public class LinkWithoutAccountContract {
     public interface View extends BaseMVP.View {
+        void onLinkShortened(String shortUrl, String longUrl);
 
+        void onLinkShortenedError(String error);
     }
 
     public interface Presenter extends BaseMVP.Presenter<LinkWithoutAccountContract.View> {

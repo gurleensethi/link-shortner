@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import app.com.thetechnocafe.linkshortner.R;
 import butterknife.BindView;
@@ -21,6 +24,8 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
     EditText mLinkEditText;
     @BindView(R.id.shorten_link_image_button)
     ImageButton mShortenLinkImageButton;
+    @BindView(R.id.progress_bar)
+    ProgressBar mProgressBar;
 
     private LinkWithoutAccountContract.Presenter mPresenter;
 
@@ -57,6 +62,9 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
         mShortenLinkImageButton.setOnClickListener(view -> {
             String longLink = mLinkEditText.getText().toString();
             mPresenter.shortenLink(longLink);
+
+            //Toggle Progress Visibility
+            toggleProgress(true);
         });
     }
 
@@ -87,6 +95,29 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
             }
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onLinkShortened(String shortUrl, String longUrl) {
+        Toast.makeText(getApplicationContext(), longUrl + " -> " + shortUrl, Toast.LENGTH_SHORT).show();
+        toggleProgress(false);
+    }
+
+    @Override
+    public void onLinkShortenedError(String error) {
+        Toast.makeText(getApplicationContext(), "Error occurred while shortening link.", Toast.LENGTH_SHORT).show();
+        toggleProgress(false);
+    }
+
+    //Toggle progress bar visibility
+    private void toggleProgress(boolean isLoading) {
+        if (isLoading) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mShortenLinkImageButton.setVisibility(View.GONE);
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+            mShortenLinkImageButton.setVisibility(View.VISIBLE);
         }
     }
 }
