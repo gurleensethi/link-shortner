@@ -10,6 +10,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -85,6 +86,9 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
 
             //Toggle Progress Visibility
             toggleProgress(true);
+
+            //Hide the keyboard
+            hideKeyboard();
         });
 
         //Copy the shortened link to clipboard when clicked on copy image
@@ -160,6 +164,17 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
         } else {
             mProgressBar.setVisibility(View.GONE);
             mShortenLinkImageButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    //Hide the input keyboard
+    private void hideKeyboard() {
+        //Get the current view that has the focus
+        View view = getCurrentFocus();
+
+        if (view != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }
