@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import app.com.thetechnocafe.linkshortner.R;
@@ -26,6 +28,12 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
     ImageButton mShortenLinkImageButton;
     @BindView(R.id.progress_bar)
     ProgressBar mProgressBar;
+    @BindView(R.id.link_details_card_view)
+    CardView mLinkDetailsCardView;
+    @BindView(R.id.original_link_text_view)
+    TextView mOriginalLinkTextView;
+    @BindView(R.id.shortened_link_text_view)
+    TextView mShortenedLinkTextView;
 
     private LinkWithoutAccountContract.Presenter mPresenter;
 
@@ -60,6 +68,9 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         mShortenLinkImageButton.setOnClickListener(view -> {
+            //Hide the card layout
+            mLinkDetailsCardView.setVisibility(View.GONE);
+
             String longLink = mLinkEditText.getText().toString();
             mPresenter.shortenLink(longLink);
 
@@ -100,7 +111,13 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
 
     @Override
     public void onLinkShortened(String shortUrl, String longUrl) {
-        Toast.makeText(getApplicationContext(), longUrl + " -> " + shortUrl, Toast.LENGTH_SHORT).show();
+        //Set the links to text views
+        mShortenedLinkTextView.setText(shortUrl);
+        mOriginalLinkTextView.setText(longUrl);
+
+        //Show the details card
+        mLinkDetailsCardView.setVisibility(View.VISIBLE);
+
         toggleProgress(false);
     }
 
