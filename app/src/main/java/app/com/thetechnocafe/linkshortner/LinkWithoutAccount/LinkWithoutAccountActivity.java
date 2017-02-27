@@ -106,6 +106,18 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
 
             Toast.makeText(getApplicationContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
         });
+
+        //Send a text intent when shared image clicked
+        mShareImageView.setOnClickListener(view -> {
+            //Create intent and set action
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+
+            //Get the text from text view and set it
+            intent.putExtra(Intent.EXTRA_TEXT, mShortenedLinkTextView.getText().toString());
+            intent.setType("text/plain");
+            startActivity(intent);
+        });
     }
 
     @Override
