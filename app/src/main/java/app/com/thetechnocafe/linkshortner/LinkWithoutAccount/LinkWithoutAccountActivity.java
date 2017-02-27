@@ -1,5 +1,7 @@
 package app.com.thetechnocafe.linkshortner.LinkWithoutAccount;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +37,12 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
     TextView mOriginalLinkTextView;
     @BindView(R.id.shortened_link_text_view)
     TextView mShortenedLinkTextView;
+    @BindView(R.id.copy_link_image_view)
+    ImageView mCopyImageView;
+    @BindView(R.id.share_link_image_view)
+    ImageView mShareImageView;
+
+    private static final String CLIPBOARD_SHORT_LINK_LABEL = "shortened link";
 
     private LinkWithoutAccountContract.Presenter mPresenter;
 
@@ -76,6 +85,22 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
 
             //Toggle Progress Visibility
             toggleProgress(true);
+        });
+
+        //Copy the shortened link to clipboard when clicked on copy image
+        mCopyImageView.setOnClickListener(view -> {
+            //Get the shortened text from text view
+            String shortenedLink = mShortenedLinkTextView.getText().toString();
+
+            //Get the clipboard manager service
+            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+
+            //Create clip data from text
+            ClipData clipData = ClipData.newPlainText(CLIPBOARD_SHORT_LINK_LABEL, shortenedLink);
+
+            clipboardManager.setPrimaryClip(clipData);
+
+            Toast.makeText(getApplicationContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
         });
     }
 
