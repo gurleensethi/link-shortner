@@ -10,6 +10,8 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -78,7 +80,9 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         mShortenLinkImageButton.setOnClickListener(view -> {
-            //Hide the card layout
+            //Hide the card layout with animation
+            Animation centerToLeftAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.center_to_left);
+            mLinkDetailsCardView.startAnimation(centerToLeftAnimation);
             mLinkDetailsCardView.setVisibility(View.GONE);
 
             String longLink = mLinkEditText.getText().toString();
@@ -156,7 +160,9 @@ public class LinkWithoutAccountActivity extends AppCompatActivity implements Lin
         mShortenedLinkTextView.setText(shortUrl);
         mOriginalLinkTextView.setText(longUrl);
 
-        //Show the details card
+        //Show the details card view and animate its entry
+        Animation rightToCenterAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_to_center);
+        mLinkDetailsCardView.startAnimation(rightToCenterAnimation);
         mLinkDetailsCardView.setVisibility(View.VISIBLE);
 
         toggleProgress(false);
