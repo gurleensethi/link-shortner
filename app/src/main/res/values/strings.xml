@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Link Shortner</string>
+    <string name="google_API_KEY">AIzaSyCc1i6J2DwNqinDnJlr2AXnKlNJrLrgqkY</string>
     <string name="sign_in">Sign In</string>
     <string name="shorten_your_links_with_google">Shorten your links with Google</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
