@@ -12,6 +12,6 @@ public class SignInContract {
     }
 
     public interface Presenter extends BaseMVP.Presenter<SignInContract.View> {
-
+        void saveAccountAndToken(String account, String token);
     }
 }

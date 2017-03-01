@@ -37,10 +37,12 @@ public class AuthPreferences {
     }
 
     //Save the auth token
-    public void setAuthToken(Context context, String token) {
+    public AuthPreferences setAuthToken(Context context, String token) {
         getSharedPreferencesEditor(context)
                 .putString(SP_AUTH_TOKEN, token)
                 .commit();
+
+        return sInstance;
     }
 
     //Get the auth token
@@ -49,15 +51,17 @@ public class AuthPreferences {
     }
 
     //Save the account name
-    public void setAccountName(Context context, String name) {
+    public AuthPreferences setAccountName(Context context, String name) {
         getSharedPreferencesEditor(context)
                 .putString(SP_ACCOUNT_NAME, name)
                 .commit();
+
+        return sInstance;
     }
 
     //Get the account name
-    public void getAccountName(Context context) {
-        getSharedPreferenes(context)
+    public String getAccountName(Context context) {
+        return getSharedPreferenes(context)
                 .getString(SP_ACCOUNT_NAME, null);
     }
 }

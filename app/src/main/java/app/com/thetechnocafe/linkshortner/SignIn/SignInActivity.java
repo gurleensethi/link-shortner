@@ -3,8 +3,6 @@ package app.com.thetechnocafe.linkshortner.SignIn;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -126,25 +123,24 @@ public class SignInActivity extends AppCompatActivity implements SignInContract.
             mAccountManager.invalidateAuthToken("com.google", mToken);
 
             //Get the Auth token for the selected account
-            mAccountManager.getAuthToken(selectedAccount, "oauth2:https://www.googleapis.com/auth/urlshortener", null, this, new AccountManagerCallback<Bundle>() {
-                @Override
-                public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
-                    try {
-                        //Get the bundle
-                        Bundle bundle = accountManagerFuture.getResult();
+            mAccountManager.getAuthToken(selectedAccount, "oauth2:https://www.googleapis.com/auth/urlshortener", null, this, accountManagerFuture -> {
+                try {
+                    //Get the bundle
+                    Bundle bundle = accountManagerFuture.getResult();
 
-                        //Get the intent from bundle
-                        Intent intent = (Intent) bundle.get(AccountManager.KEY_INTENT);
+                    //Get the intent from bundle
+                    Intent intent = (Intent) bundle.get(AccountManager.KEY_INTENT);
 
-                        if (intent != null) {
-                            startActivityForResult(intent, RC_AGAIN_TOKEN);
-                        } else {
-                            mToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-                            Log.d("TOKEN", mToken);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (intent != null) {
+                        startActivityForResult(intent, RC_AGAIN_TOKEN);
+                    } else {
+                        mToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+
+                        //Save the account and token
+                        mPresenter.saveAccountAndToken(mAccountName, mToken);
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }, null);
         }

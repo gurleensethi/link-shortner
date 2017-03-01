@@ -1,5 +1,7 @@
 package app.com.thetechnocafe.linkshortner.SignIn;
 
+import app.com.thetechnocafe.linkshortner.Utilities.AuthPreferences;
+
 /**
  * Created by gurleensethi on 25/02/17.
  */
@@ -27,5 +29,13 @@ public class SignInPresenter implements SignInContract.Presenter {
     @Override
     public void onPause() {
 
+    }
+
+    @Override
+    public void saveAccountAndToken(String account, String token) {
+        //Save the account and token
+        AuthPreferences.getInstance()
+                .setAccountName(mMainView.getAppContext(), account)
+                .setAuthToken(mMainView.getAppContext(), token);
     }
 }
