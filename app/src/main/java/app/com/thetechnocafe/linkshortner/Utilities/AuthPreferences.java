@@ -64,4 +64,11 @@ public class AuthPreferences {
         return getSharedPreferenes(context)
                 .getString(SP_ACCOUNT_NAME, null);
     }
+
+    //Invalidate the account name and token
+    public void invalidateAuth(Context context) {
+        getSharedPreferencesEditor(context)
+                .putString(SP_ACCOUNT_NAME, null)
+                .putString(SP_AUTH_TOKEN, null);
+    }
 }

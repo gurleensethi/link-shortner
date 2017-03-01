@@ -49,24 +49,26 @@
                     style="@style/LinkEditTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.9"
-                    android:hint="@string/your_original_url_here" />
+                    android:layout_weight="0.92"
+                    android:hint="@string/your_original_url_here"
+                    android:paddingLeft="16dp" />
 
                 <ImageButton
                     android:id="@+id/shorten_link_image_button"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.1"
+                    android:layout_weight="0.08"
                     android:background="@android:color/transparent"
                     android:clickable="true"
                     android:foreground="?attr/selectableItemBackground"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/ic_arrow_right_grey" />
 
                 <ProgressBar
                     android:id="@+id/progress_bar"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.1"
+                    android:layout_weight="0.08"
                     android:visibility="gone" />
 
             </LinearLayout>

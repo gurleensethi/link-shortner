@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import app.com.thetechnocafe.linkshortner.Home.HomeActivity;
 import app.com.thetechnocafe.linkshortner.LinkWithoutAccount.LinkWithoutAccountActivity;
 import app.com.thetechnocafe.linkshortner.R;
 import butterknife.BindView;
@@ -174,5 +175,12 @@ public class SignInActivity extends AppCompatActivity implements SignInContract.
                 Toast.makeText(this, "Account Permissions required to Sign In", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void startHomeActivity() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

@@ -23,7 +23,10 @@ public class SignInPresenter implements SignInContract.Presenter {
 
     @Override
     public void onResume() {
-
+        //Check if logged in
+        if (AuthPreferences.getInstance().getAccountName(mMainView.getAppContext()) != null) {
+            mMainView.startHomeActivity();
+        }
     }
 
     @Override
@@ -37,5 +40,8 @@ public class SignInPresenter implements SignInContract.Presenter {
         AuthPreferences.getInstance()
                 .setAccountName(mMainView.getAppContext(), account)
                 .setAuthToken(mMainView.getAppContext(), token);
+
+        //Start the home activity
+        mMainView.startHomeActivity();
     }
 }

@@ -8,7 +8,7 @@ import app.com.thetechnocafe.linkshortner.BaseMVP;
 
 public class SignInContract {
     public interface View extends BaseMVP.View {
-
+        void startHomeActivity();
     }
 
     public interface Presenter extends BaseMVP.Presenter<SignInContract.View> {
