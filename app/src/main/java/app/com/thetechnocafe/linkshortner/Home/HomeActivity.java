@@ -3,11 +3,16 @@ package app.com.thetechnocafe.linkshortner.Home;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import app.com.thetechnocafe.linkshortner.R;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeActivity extends AppCompatActivity implements HomeContract.View {
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
 
     private HomeContract.Presenter mPresenter;
 
@@ -29,6 +34,11 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
 
     @Override
     public void initViews() {
+        //Configure toolbar
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.home);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
 
     }
 

@@ -10,4 +10,9 @@
     <string name="original_link">Original Link</string>
     <string name="shortened_link">Shortened Link</string>
     <string name="copied_to_clipboard">Copied to clipboard.</string>
+    <string name="home">Home</string>
+    <string name="total_links_shortened">Total Links Shortened</string>
+    <string name="total_clicks">Total Clicks</string>
+    <string name="view_complete_stats">View Complete Stats</string>
+    <string name="shortened_links">Shortened Links</string>
 </resources>
