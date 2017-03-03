@@ -1,5 +1,7 @@
 package app.com.thetechnocafe.linkshortner.Adapters;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -40,6 +43,21 @@ public class LinksRecyclerAdapter extends RecyclerView.Adapter<LinksRecyclerAdap
         LinksViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            //Copy the link to clipboard
+            mCopyImageView.setOnClickListener(view -> {
+                //Get the clipboard service
+                ClipboardManager clipboardManager = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+
+                //Create a clip
+                ClipData clipData = ClipData.newPlainText("Short Link", mShortLinks.get(mPosition).getId());
+
+                //Copy to clipboard
+                clipboardManager.setPrimaryClip(clipData);
+
+                //Notify user with toast
+                Toast.makeText(mContext, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+            });
         }
 
         //Bind data to item
