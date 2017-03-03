@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -21,6 +23,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     Toolbar mToolbar;
     @BindView(R.id.links_recycler_view)
     RecyclerView mLinksRecyclerView;
+    @BindView(R.id.no_shortened_links_text_view)
+    TextView mNoShortenedLinksTextView;
 
     private HomeContract.Presenter mPresenter;
     private LinksRecyclerAdapter mLinksRecyclerAdapter;
@@ -75,7 +79,17 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
 
     @Override
     public void onShortLinksReceived(List<ShortLink> shortLinks) {
-        setUpOrRefreshRecyclerView(shortLinks);
+        //Check if links are available
+        if (shortLinks.size() > 0) {
+            mLinksRecyclerView.setVisibility(View.VISIBLE);
+            mNoShortenedLinksTextView.setVisibility(View.GONE);
+
+            //Send data to recycler view
+            setUpOrRefreshRecyclerView(shortLinks);
+        } else {
+            mLinksRecyclerView.setVisibility(View.GONE);
+            mNoShortenedLinksTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setUpOrRefreshRecyclerView(List<ShortLink> shortLinks) {

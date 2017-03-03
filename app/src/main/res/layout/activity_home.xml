@@ -210,9 +210,19 @@
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/links_recycler_view"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:visibility="gone">
 
                         </android.support.v7.widget.RecyclerView>
+
+                        <TextView
+                            android:id="@+id/no_shortened_links_text_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="16dp"
+                            android:text="No Shortened Links"
+                            android:visibility="gone"/>
 
                     </LinearLayout>
 
