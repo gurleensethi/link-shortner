@@ -45,7 +45,7 @@ public class HomePresenter implements HomeContract.Presenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shortenedLinks -> {
-                    Toast.makeText(mMainView.getAppContext(), String.valueOf(shortenedLinks.getTotalItems()), Toast.LENGTH_SHORT).show();
+                    mMainView.onShortLinksReceived(shortenedLinks.getShortenedLinks());
                 }, throwable -> {
                     throwable.printStackTrace();
                     Toast.makeText(mMainView.getAppContext(), "Error occurred", Toast.LENGTH_SHORT).show();
