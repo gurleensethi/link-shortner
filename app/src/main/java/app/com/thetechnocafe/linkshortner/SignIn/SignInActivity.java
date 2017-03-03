@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -136,6 +137,8 @@ public class SignInActivity extends AppCompatActivity implements SignInContract.
                         startActivityForResult(intent, RC_AGAIN_TOKEN);
                     } else {
                         mToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+
+                        Log.d("Testing", mToken);
 
                         //Save the account and token
                         mPresenter.saveAccountAndToken(mAccountName, mToken);
