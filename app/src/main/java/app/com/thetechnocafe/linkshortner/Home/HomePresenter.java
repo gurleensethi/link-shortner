@@ -1,5 +1,12 @@
 package app.com.thetechnocafe.linkshortner.Home;
 
+import android.widget.Toast;
+
+import app.com.thetechnocafe.linkshortner.Networking.NetworkService;
+import app.com.thetechnocafe.linkshortner.Utilities.AuthPreferences;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * Created by gurleensethi on 01/03/17.
  */
@@ -12,6 +19,8 @@ public class HomePresenter implements HomeContract.Presenter {
     public void attachView(HomeContract.View view) {
         mMainView = view;
         mMainView.initViews();
+
+        getListOfLinksForAccount();
     }
 
     @Override
@@ -27,5 +36,19 @@ public class HomePresenter implements HomeContract.Presenter {
     @Override
     public void onPause() {
 
+    }
+
+    private void getListOfLinksForAccount() {
+        NetworkService.getInstance()
+                .getLinkShortenerAPI()
+                .getListOfShortenedLinks(AuthPreferences.getInstance().getAuthToken(mMainView.getAppContext()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shortenedLinks -> {
+                    Toast.makeText(mMainView.getAppContext(), String.valueOf(shortenedLinks.getTotalItems()), Toast.LENGTH_SHORT).show();
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    Toast.makeText(mMainView.getAppContext(), "Error occurred", Toast.LENGTH_SHORT).show();
+                });
     }
 }

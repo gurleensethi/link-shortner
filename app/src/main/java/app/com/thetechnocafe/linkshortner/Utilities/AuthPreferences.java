@@ -47,7 +47,7 @@ public class AuthPreferences {
 
     //Get the auth token
     public String getAuthToken(Context context) {
-        return getSharedPreferenes(context).getString(SP_AUTH_TOKEN, null);
+        return Constants.BEARER + " " + getSharedPreferenes(context).getString(SP_AUTH_TOKEN, null);
     }
 
     //Save the account name
