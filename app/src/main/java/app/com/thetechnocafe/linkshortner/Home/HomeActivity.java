@@ -1,6 +1,9 @@
 package app.com.thetechnocafe.linkshortner.Home;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +31,7 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
 
     private HomeContract.Presenter mPresenter;
     private LinksRecyclerAdapter mLinksRecyclerAdapter;
+    private AccountManager mAccountManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
         setContentView(R.layout.activity_home);
 
         ButterKnife.bind(this);
+
+        mAccountManager = AccountManager.get(this);
 
         mPresenter = new HomePresenter();
         mPresenter.attachView(this);
@@ -78,6 +84,11 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     }
 
     @Override
+    public void requestNewToken(String token, String accountName) {
+        requestToken(token, accountName);
+    }
+
+    @Override
     public void onShortLinksReceived(List<ShortLink> shortLinks) {
         //Check if links are available
         if (shortLinks.size() > 0) {
@@ -100,4 +111,42 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
             mLinksRecyclerAdapter.notifyDataSetChanged();
         }
     }
+
+    //Request the OAuth Token
+    private void requestToken(String oldToken, String accountName) {
+        //Temporary account
+        Account selectedAccount = null;
+
+        //Retrieve the selected account account
+        for (Account account : mAccountManager.getAccountsByType("com.google")) {
+            if (account.name.equals(accountName)) {
+                selectedAccount = account;
+            }
+        }
+
+        mAccountManager.invalidateAuthToken("com.google", oldToken);
+
+        //Get the Auth token for the selected account
+        mAccountManager.getAuthToken(selectedAccount, "oauth2:https://www.googleapis.com/auth/urlshortener", null, this, accountManagerFuture -> {
+            try {
+                //Get the bundle
+                Bundle bundle = accountManagerFuture.getResult();
+
+                //Get the intent from bundle
+                Intent intent = (Intent) bundle.get(AccountManager.KEY_INTENT);
+
+                if (intent != null) {
+                    //startActivityForResult(intent, RC_AGAIN_TOKEN);
+                } else {
+                    String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+
+                    //Save the account and token
+                    mPresenter.saveNewToken(token);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, null);
+    }
+
 }

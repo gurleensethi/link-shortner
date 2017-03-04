@@ -20,7 +20,11 @@ public class HomePresenter implements HomeContract.Presenter {
         mMainView = view;
         mMainView.initViews();
 
-        getListOfLinksForAccount();
+        //Generate new token
+        mMainView.requestNewToken(
+                AuthPreferences.getInstance().getAuthToken(mMainView.getAppContext()),
+                AuthPreferences.getInstance().getAccountName(mMainView.getAppContext())
+        );
     }
 
     @Override
@@ -50,5 +54,13 @@ public class HomePresenter implements HomeContract.Presenter {
                     throwable.printStackTrace();
                     Toast.makeText(mMainView.getAppContext(), "Error occurred", Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    @Override
+    public void saveNewToken(String token) {
+        //Save the new token
+        AuthPreferences.getInstance().setAuthToken(mMainView.getAppContext(), token);
+
+        getListOfLinksForAccount();
     }
 }

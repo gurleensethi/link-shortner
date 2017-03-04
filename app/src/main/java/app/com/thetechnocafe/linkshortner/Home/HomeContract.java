@@ -11,10 +11,12 @@ import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortLink;
 
 public class HomeContract {
     public interface View extends BaseMVP.View {
+        void requestNewToken(String token, String accountName);
+
         void onShortLinksReceived(List<ShortLink> shortLinks);
     }
 
     public interface Presenter extends BaseMVP.Presenter<HomeContract.View> {
-
+        void saveNewToken(String token);
     }
 }
