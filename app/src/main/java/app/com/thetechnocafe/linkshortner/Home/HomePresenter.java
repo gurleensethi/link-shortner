@@ -2,6 +2,7 @@ package app.com.thetechnocafe.linkshortner.Home;
 
 import android.widget.Toast;
 
+import app.com.thetechnocafe.linkshortner.Database.DatabaseAPI;
 import app.com.thetechnocafe.linkshortner.Networking.NetworkService;
 import app.com.thetechnocafe.linkshortner.Utilities.AuthPreferences;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -45,10 +46,14 @@ public class HomePresenter implements HomeContract.Presenter {
     private void getListOfLinksForAccount() {
         NetworkService.getInstance()
                 .getLinkShortenerAPI()
-                .getListOfShortenedLinks(AuthPreferences.getInstance().getAuthToken(mMainView.getAppContext()))
+                .getListOfShortenedLinks(AuthPreferences.getInstance().getAuthToken(mMainView.getAppContext()), "FULL")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shortenedLinks -> {
+                    //Insert the links in database
+                    DatabaseAPI.getInstance(mMainView.getAppContext())
+                            .insertShortLinkAsync(shortenedLinks.getShortenedLinks());
+
                     mMainView.onShortLinksReceived(shortenedLinks.getShortenedLinks());
                 }, throwable -> {
                     throwable.printStackTrace();

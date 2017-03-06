@@ -9,6 +9,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Created by gurleensethi on 25/02/17.
@@ -19,5 +20,5 @@ public interface GoogleLinkShortenerAPI {
     Observable<ShortenedLinkModel> getShortenedLink(@Body LongLinkPOSTModel longUrl);
 
     @GET("url/history")
-    Observable<ShortenedLinks> getListOfShortenedLinks(@Header(Constants.AUTHORIZATION) String authKey);
+    Observable<ShortenedLinks> getListOfShortenedLinks(@Header(Constants.AUTHORIZATION) String authKey, @Query("projection") String projection);
 }
