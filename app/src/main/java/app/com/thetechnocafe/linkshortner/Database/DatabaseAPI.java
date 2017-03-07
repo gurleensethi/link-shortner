@@ -6,11 +6,19 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import app.com.thetechnocafe.linkshortner.Models.UrlListModels.AllTime;
+import app.com.thetechnocafe.linkshortner.Models.UrlListModels.Analytics;
+import app.com.thetechnocafe.linkshortner.Models.UrlListModels.Day;
+import app.com.thetechnocafe.linkshortner.Models.UrlListModels.Month;
 import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortLink;
+import app.com.thetechnocafe.linkshortner.Models.UrlListModels.TwoHours;
+import app.com.thetechnocafe.linkshortner.Models.UrlListModels.Week;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
@@ -114,5 +122,91 @@ public class DatabaseAPI {
                 .filter(shortLinkAlreadyExistsPredicate)
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::insertLink);
+    }
+
+    /**
+     * Get the list of all the saved short links in the database
+     * and return it in a RxObservable
+     */
+    public Observable<List<ShortLink>> getSavedShortLinks() {
+        Observable<List<ShortLink>> observable = Observable.create(emitter -> {
+            //Get the database
+            SQLiteDatabase database = mDatabaseHelper.getReadableDatabase();
+
+            //Create a list of short links
+            List<ShortLink> shortLinksList = new ArrayList<>();
+
+            //SQL to get all links
+            String shortLinkSQL = "SELECT * FROM " + DatabaseHelper.SHORT_LINK_TABLE;
+
+            //SQL to get all analytics of a short link (replace the {short_link_id} with the id of short link)
+            String analyticsSQL = "SELECT * FROM " + DatabaseHelper.ANALYTICS_TABLE
+                    + " WHERE " + DatabaseHelper.COL_ANALYTICS_ID + " = {short_link_id}";
+
+            //Run the query and get the cursor
+            Cursor shortLinkCursor = database.rawQuery(shortLinkSQL, null);
+
+            shortLinkCursor.moveToFirst();
+
+            //Loop and get all values
+            while (shortLinkCursor.moveToNext()) {
+                ShortLink shortLink = new ShortLink();
+
+                //Get the id of short link
+                String shortLinkID = shortLinkCursor.getString(shortLinkCursor.getColumnIndex(DatabaseHelper.COL_SHORT_LINK_ID));
+
+                shortLink.setId(shortLinkID);
+                shortLink.setCreated(shortLinkCursor.getString(shortLinkCursor.getColumnIndex(DatabaseHelper.COL_SHORT_LINK_CREATED)));
+                shortLink.setKind(shortLinkCursor.getString(shortLinkCursor.getColumnIndex(DatabaseHelper.COL_SHORT_LINK_KIND)));
+                shortLink.setLongUrl(shortLinkCursor.getString(shortLinkCursor.getColumnIndex(DatabaseHelper.COL_SHORT_LINK_LONG_URL)));
+                shortLink.setStatus(shortLinkCursor.getString(shortLinkCursor.getColumnIndex(DatabaseHelper.COL_SHORT_LINK_STATUS)));
+
+                //Get the cursor for analytics corresponding to the particular shortLink ID
+                Cursor analyticsCursor = database.rawQuery(analyticsSQL.replace("{short_link_id}", shortLinkID), null);
+
+                analyticsCursor.moveToFirst();
+
+                //Loop and get the analytics object
+                while (analyticsCursor.moveToNext()) {
+                    Analytics analytics = new Analytics();
+
+                    AllTime allTime = new AllTime();
+                    allTime.setShortUrlClicks(analyticsCursor.getString(analyticsCursor.getColumnIndex(DatabaseHelper.COL_ANALYTICS_ALL_TIME)));
+                    Day day = new Day();
+                    day.setShortUrlClicks(analyticsCursor.getString(analyticsCursor.getColumnIndex(DatabaseHelper.COL_ANALYTICS_DAY)));
+                    Month month = new Month();
+                    month.setShortUrlClicks(analyticsCursor.getString(analyticsCursor.getColumnIndex(DatabaseHelper.COL_ANALYTICS_MONTH)));
+                    TwoHours twoHours = new TwoHours();
+                    twoHours.setShortUrlClicks(analyticsCursor.getString(analyticsCursor.getColumnIndex(DatabaseHelper.COL_ANALYTICS_TWO_HOURS)));
+                    Week week = new Week();
+                    week.setShortUrlClicks(analyticsCursor.getString(analyticsCursor.getColumnIndex(DatabaseHelper.COL_ANALYTICS_WEEK)));
+
+                    analytics.setAllTime(allTime);
+                    analytics.setDay(day);
+                    analytics.setMonth(month);
+                    analytics.setTwoHours(twoHours);
+                    analytics.setWeek(week);
+
+                    shortLink.setAnalytics(analytics);
+                }
+
+                //Close the cursor
+                analyticsCursor.close();
+
+                //Add shortLink to list
+                shortLinksList.add(shortLink);
+            }
+
+            //Close the cursor
+            shortLinkCursor.close();
+
+            //Close database
+            database.close();
+
+            emitter.onNext(shortLinksList);
+
+        });
+
+        return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 }
