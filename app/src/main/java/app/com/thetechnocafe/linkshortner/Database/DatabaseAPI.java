@@ -141,7 +141,7 @@ public class DatabaseAPI {
 
             //SQL to get all analytics of a short link (replace the {short_link_id} with the id of short link)
             String analyticsSQL = "SELECT * FROM " + DatabaseHelper.ANALYTICS_TABLE
-                    + " WHERE " + DatabaseHelper.COL_ANALYTICS_ID + " = {short_link_id}";
+                    + " WHERE " + DatabaseHelper.COL_ANALYTICS_ID + " = \"{short_link_id}\"";
 
             //Run the query and get the cursor
             Cursor shortLinkCursor = database.rawQuery(shortLinkSQL, null);
@@ -204,7 +204,7 @@ public class DatabaseAPI {
             database.close();
 
             emitter.onNext(shortLinksList);
-
+            emitter.onComplete();
         });
 
         return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());

@@ -1,11 +1,11 @@
 package app.com.thetechnocafe.linkshortner.Home;
 
-import android.widget.Toast;
-
 import app.com.thetechnocafe.linkshortner.Database.DatabaseAPI;
 import app.com.thetechnocafe.linkshortner.Networking.NetworkService;
 import app.com.thetechnocafe.linkshortner.Utilities.AuthPreferences;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -15,6 +15,7 @@ import io.reactivex.schedulers.Schedulers;
 public class HomePresenter implements HomeContract.Presenter {
 
     private HomeContract.View mMainView;
+    private CompositeDisposable compositeDisposable;
 
     @Override
     public void attachView(HomeContract.View view) {
@@ -26,11 +27,17 @@ public class HomePresenter implements HomeContract.Presenter {
                 AuthPreferences.getInstance().getAuthToken(mMainView.getAppContext()),
                 AuthPreferences.getInstance().getAccountName(mMainView.getAppContext())
         );
+
+        compositeDisposable = new CompositeDisposable();
     }
 
     @Override
     public void detachView() {
         mMainView = null;
+
+        if (compositeDisposable != null) {
+            compositeDisposable.dispose();
+        }
     }
 
     @Override
@@ -43,29 +50,42 @@ public class HomePresenter implements HomeContract.Presenter {
 
     }
 
-    private void getListOfLinksForAccount() {
-        NetworkService.getInstance()
-                .getLinkShortenerAPI()
-                .getListOfShortenedLinks(AuthPreferences.getInstance().getAuthToken(mMainView.getAppContext()), "FULL")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(shortenedLinks -> {
-                    //Insert the links in database
-                    DatabaseAPI.getInstance(mMainView.getAppContext())
-                            .insertShortLinkAsync(shortenedLinks.getShortenedLinks());
-
-                    mMainView.onShortLinksReceived(shortenedLinks.getShortenedLinks());
-                }, throwable -> {
-                    throwable.printStackTrace();
-                    Toast.makeText(mMainView.getAppContext(), "Error occurred", Toast.LENGTH_SHORT).show();
-                });
-    }
-
     @Override
     public void saveNewToken(String token) {
         //Save the new token
         AuthPreferences.getInstance().setAuthToken(mMainView.getAppContext(), token);
 
-        getListOfLinksForAccount();
+        loadLinksFromDatabase();
+    }
+
+    private void loadLinksFromDatabase() {
+        //Create a disposable to get all the links from database
+        Disposable disposable = DatabaseAPI.getInstance(mMainView.getAppContext())
+                .getSavedShortLinks()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shortLinks -> {
+                    mMainView.onShortLinksReceived(shortLinks);
+                    loadLinksFromNetwork();
+                });
+
+        compositeDisposable.add(disposable);
+    }
+
+    private void loadLinksFromNetwork() {
+        //Create a disposable to get all the links from network
+        Disposable disposable = NetworkService.getInstance()
+                .getLinkShortenerAPI()
+                .getListOfShortenedLinks(AuthPreferences.getInstance().getAuthToken(mMainView.getAppContext()), "FULL")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shortenedLinks -> {
+                    mMainView.onShortLinksReceived(shortenedLinks.getShortenedLinks());
+
+                    //Update the database with new links
+                    DatabaseAPI.getInstance(mMainView.getAppContext()).insertShortLinkAsync(shortenedLinks.getShortenedLinks());
+                });
+
+        compositeDisposable.add(disposable);
     }
 }
