@@ -127,8 +127,11 @@ public class DatabaseAPI {
     /**
      * Get the list of all the saved short links in the database
      * and return it in a RxObservable
+     *
+     * @param maxLinks the maximum result that should be returned,
+     *                 if 0 then all the links are returned
      */
-    public Observable<List<ShortLink>> getSavedShortLinks() {
+    public Observable<List<ShortLink>> getSavedShortLinks(int maxLinks) {
         Observable<List<ShortLink>> observable = Observable.create(emitter -> {
             //Get the database
             SQLiteDatabase database = mDatabaseHelper.getReadableDatabase();
@@ -138,6 +141,10 @@ public class DatabaseAPI {
 
             //SQL to get all links
             String shortLinkSQL = "SELECT * FROM " + DatabaseHelper.SHORT_LINK_TABLE;
+
+            if (maxLinks != 0) {
+                shortLinkSQL += " LIMIT " + maxLinks;
+            }
 
             //SQL to get all analytics of a short link (replace the {short_link_id} with the id of short link)
             String analyticsSQL = "SELECT * FROM " + DatabaseHelper.ANALYTICS_TABLE

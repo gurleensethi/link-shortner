@@ -1,8 +1,12 @@
 package app.com.thetechnocafe.linkshortner.Home;
 
+import java.util.List;
+
 import app.com.thetechnocafe.linkshortner.Database.DatabaseAPI;
+import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortLink;
 import app.com.thetechnocafe.linkshortner.Networking.NetworkService;
 import app.com.thetechnocafe.linkshortner.Utilities.AuthPreferences;
+import app.com.thetechnocafe.linkshortner.Utilities.Constants;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -61,9 +65,7 @@ public class HomePresenter implements HomeContract.Presenter {
     private void loadLinksFromDatabase() {
         //Create a disposable to get all the links from database
         Disposable disposable = DatabaseAPI.getInstance(mMainView.getAppContext())
-                .getSavedShortLinks()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .getSavedShortLinks(Constants.MAX_HOME_SCREEN_LINKS)
                 .subscribe(shortLinks -> {
                     mMainView.onShortLinksReceived(shortLinks);
                     loadLinksFromNetwork();
@@ -80,10 +82,16 @@ public class HomePresenter implements HomeContract.Presenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shortenedLinks -> {
-                    mMainView.onShortLinksReceived(shortenedLinks.getShortenedLinks());
+                    List<ShortLink> shortLinks = shortenedLinks.getShortenedLinks();
+
+                    mMainView.onShortLinksReceived(
+                            shortLinks.size() >= Constants.MAX_HOME_SCREEN_LINKS ? shortLinks.subList(0, Constants.MAX_HOME_SCREEN_LINKS) : shortLinks
+                    );
 
                     //Update the database with new links
                     DatabaseAPI.getInstance(mMainView.getAppContext()).insertShortLinkAsync(shortenedLinks.getShortenedLinks());
+                }, throwable -> {
+
                 });
 
         compositeDisposable.add(disposable);

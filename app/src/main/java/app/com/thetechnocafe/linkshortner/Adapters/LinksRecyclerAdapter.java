@@ -83,4 +83,8 @@ public class LinksRecyclerAdapter extends RecyclerView.Adapter<LinksRecyclerAdap
     public int getItemCount() {
         return mShortLinks.size();
     }
+
+    public void updateList(List<ShortLink> shortLinksList) {
+        mShortLinks = shortLinksList;
+    }
 }

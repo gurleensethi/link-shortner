@@ -15,4 +15,6 @@
     <string name="total_clicks">Total Clicks</string>
     <string name="view_complete_stats">View Complete Stats</string>
     <string name="shortened_links">Shortened Links</string>
+    <string name="link">Link</string>
+    <string name="view_all_links">View all links</string>
 </resources>

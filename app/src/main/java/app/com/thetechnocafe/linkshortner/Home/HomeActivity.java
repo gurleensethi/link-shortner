@@ -108,6 +108,7 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
             mLinksRecyclerAdapter = new LinksRecyclerAdapter(this, shortLinks);
             mLinksRecyclerView.setAdapter(mLinksRecyclerAdapter);
         } else {
+            mLinksRecyclerAdapter.updateList(shortLinks);
             mLinksRecyclerAdapter.notifyDataSetChanged();
         }
     }
