@@ -171,8 +171,6 @@ public class DatabaseAPI {
                 //Get the cursor for analytics corresponding to the particular shortLink ID
                 Cursor analyticsCursor = database.rawQuery(analyticsSQL.replace("{short_link_id}", shortLinkID), null);
 
-                analyticsCursor.moveToFirst();
-
                 //Loop and get the analytics object
                 while (analyticsCursor.moveToNext()) {
                     Analytics analytics = new Analytics();

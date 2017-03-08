@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -148,6 +149,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
                     //startActivityForResult(intent, RC_AGAIN_TOKEN);
                 } else {
                     String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+
+                    Log.d("HomeActivity", token);
 
                     //Save the account and token
                     mPresenter.saveNewToken(token);
