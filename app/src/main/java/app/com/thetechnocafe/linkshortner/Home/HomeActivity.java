@@ -10,11 +10,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import app.com.thetechnocafe.linkshortner.Adapters.LinksRecyclerAdapter;
+import app.com.thetechnocafe.linkshortner.AllLinks.AllLinksActivity;
 import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortLink;
 import app.com.thetechnocafe.linkshortner.R;
 import butterknife.BindView;
@@ -28,6 +30,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     RecyclerView mLinksRecyclerView;
     @BindView(R.id.no_shortened_links_text_view)
     TextView mNoShortenedLinksTextView;
+    @BindView(R.id.view_all_links_linear_layout)
+    LinearLayout mViewAllLinksLinearLayout;
 
     private HomeContract.Presenter mPresenter;
     private LinksRecyclerAdapter mLinksRecyclerAdapter;
@@ -62,6 +66,10 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
         //Configure recycler view
         mLinksRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mLinksRecyclerView.setNestedScrollingEnabled(false);
+
+        mViewAllLinksLinearLayout.setOnClickListener(view -> {
+            startActivity(AllLinksActivity.getIntent(getApplicationContext()));
+        });
 
     }
 

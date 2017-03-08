@@ -17,4 +17,5 @@
     <string name="shortened_links">Shortened Links</string>
     <string name="link">Link</string>
     <string name="view_all_links">View all links</string>
+    <string name="all_links">All Links</string>
 </resources>

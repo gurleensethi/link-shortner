@@ -220,6 +220,7 @@
                         android:visibility="gone" />
 
                     <LinearLayout
+                        android:id="@+id/view_all_links_linear_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/md_grey_200"
