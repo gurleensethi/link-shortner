@@ -153,8 +153,6 @@ public class DatabaseAPI {
             //Run the query and get the cursor
             Cursor shortLinkCursor = database.rawQuery(shortLinkSQL, null);
 
-            shortLinkCursor.moveToFirst();
-
             //Loop and get all values
             while (shortLinkCursor.moveToNext()) {
                 ShortLink shortLink = new ShortLink();
