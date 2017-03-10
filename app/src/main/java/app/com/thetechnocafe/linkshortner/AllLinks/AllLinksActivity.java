@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import java.util.List;
 
@@ -77,10 +78,21 @@ public class AllLinksActivity extends AppCompatActivity implements AllLinksContr
 
     private void setUpOrRefreshRecyclerView(List<ShortLink> shortLinks) {
         if (mAllLinksRecyclerAdapter == null) {
-            mAllLinksRecyclerAdapter = new AllLinksRecyclerAdapter(getApplicationContext(), shortLinks);
+            mAllLinksRecyclerAdapter = new AllLinksRecyclerAdapter(this, shortLinks);
             mShortLinksRecyclerView.setAdapter(mAllLinksRecyclerAdapter);
         } else {
             mAllLinksRecyclerAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

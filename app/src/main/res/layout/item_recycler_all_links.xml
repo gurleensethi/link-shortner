@@ -5,9 +5,11 @@
     app:cardElevation="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    android:layout_marginTop="16dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="8dp"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
     android:orientation="vertical">
 
     <LinearLayout
@@ -85,7 +87,9 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_copy"
-                android:tint="@android:color/black" />
+                android:tint="@android:color/black"
+                android:clickable="true"
+                android:background="?selectableItemBackgroundBorderless"/>
 
             <ImageView
                 android:id="@+id/share_link_image_view"
@@ -94,7 +98,9 @@
                 android:layout_marginLeft="24dp"
                 android:layout_toRightOf="@id/copy_link_image_view"
                 android:src="@drawable/ic_share"
-                android:tint="@android:color/black" />
+                android:tint="@android:color/black"
+                android:clickable="true"
+                android:background="?selectableItemBackgroundBorderless"/>
 
             <ImageView
                 android:id="@+id/open_details_image_view"
