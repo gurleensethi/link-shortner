@@ -212,4 +212,20 @@ public class DatabaseAPI {
 
         return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
+
+    /**
+     * Delete all the data in both tables
+     */
+    public void deleteAllData() {
+        Observable.create((ObservableOnSubscribe<Void>) e -> {
+            //Get the database
+            SQLiteDatabase database = mDatabaseHelper.getReadableDatabase();
+
+            database.delete(DatabaseHelper.SHORT_LINK_TABLE, null, null);
+            database.delete(DatabaseHelper.ANALYTICS_TABLE, null, null);
+
+            //Close database
+            database.close();
+        }).subscribe();
+    }
 }

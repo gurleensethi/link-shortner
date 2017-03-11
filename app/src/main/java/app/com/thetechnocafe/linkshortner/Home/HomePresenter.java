@@ -66,6 +66,9 @@ public class HomePresenter implements HomeContract.Presenter {
     public void signOut() {
         //Remove the account name
         AuthPreferences.getInstance().setAccountName(mMainView.getAppContext(), null);
+
+        //Delete all the data
+        DatabaseAPI.getInstance(mMainView.getAppContext()).deleteAllData();
     }
 
     private void loadLinksFromDatabase() {
