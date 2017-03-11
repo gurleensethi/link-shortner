@@ -18,5 +18,7 @@ public class HomeContract {
 
     public interface Presenter extends BaseMVP.Presenter<HomeContract.View> {
         void saveNewToken(String token);
+
+        void signOut();
     }
 }

@@ -62,6 +62,12 @@ public class HomePresenter implements HomeContract.Presenter {
         loadLinksFromDatabase();
     }
 
+    @Override
+    public void signOut() {
+        //Remove the account name
+        AuthPreferences.getInstance().setAccountName(mMainView.getAppContext(), null);
+    }
+
     private void loadLinksFromDatabase() {
         //Create a disposable to get all the links from database
         Disposable disposable = DatabaseAPI.getInstance(mMainView.getAppContext())

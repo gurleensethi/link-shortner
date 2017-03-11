@@ -10,6 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,6 +23,7 @@ import app.com.thetechnocafe.linkshortner.Adapters.LinksRecyclerAdapter;
 import app.com.thetechnocafe.linkshortner.AllLinks.AllLinksActivity;
 import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortLink;
 import app.com.thetechnocafe.linkshortner.R;
+import app.com.thetechnocafe.linkshortner.SignIn.SignInActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -60,9 +64,6 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     public void initViews() {
         //Configure toolbar
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.home);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
 
         //Configure recycler view
         mLinksRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -161,4 +162,27 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
         }, null);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.home_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_sign_out: {
+                mPresenter.signOut();
+
+                //Start the sign in activity
+                Intent intent = new Intent(this, SignInActivity.class);
+                startActivity(intent);
+
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
