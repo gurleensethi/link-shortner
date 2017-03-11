@@ -8,4 +8,8 @@
         <item name="android:textColorHint">@android:color/darker_gray</item>
         <item name="android:lines">1</item>
     </style>
+    
+    <style name="ToolbarStyle">
+        <item name="android:textColorSecondary">@color/md_white_1000</item>
+    </style>
 </resources>

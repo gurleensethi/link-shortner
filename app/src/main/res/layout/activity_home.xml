@@ -5,6 +5,7 @@
     android:id="@+id/activity_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
     tools:context="app.com.thetechnocafe.linkshortner.Home.HomeActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -16,7 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:titleTextColor="@android:color/white">
+            app:titleTextColor="@android:color/white"
+            app:theme="@style/ToolbarStyle">
 
         </android.support.v7.widget.Toolbar>
 
