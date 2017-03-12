@@ -65,7 +65,6 @@ public class DatabaseAPI {
 
             //Close cursor and database
             cursor.close();
-            database.close();
 
             return result;
         }
@@ -203,9 +202,6 @@ public class DatabaseAPI {
             //Close the cursor
             shortLinkCursor.close();
 
-            //Close database
-            database.close();
-
             emitter.onNext(shortLinksList);
             emitter.onComplete();
         });
@@ -224,8 +220,55 @@ public class DatabaseAPI {
             database.delete(DatabaseHelper.SHORT_LINK_TABLE, null, null);
             database.delete(DatabaseHelper.ANALYTICS_TABLE, null, null);
 
-            //Close database
-            database.close();
         }).subscribe();
+    }
+
+    /**
+     * Get the total number of clicks for the links, return a RxObservable
+     */
+    public Observable<Integer> getTotalClicks() {
+        Observable<Integer> observable = Observable.create(emitter -> {
+            int totalClicks = 0;
+
+            //Get the database
+            SQLiteDatabase database = mDatabaseHelper.getReadableDatabase();
+
+            //SQL to get all links
+            String shortLinkSQL = "SELECT * FROM " + DatabaseHelper.SHORT_LINK_TABLE;
+
+            //SQL to get all analytics of a short link (replace the {short_link_id} with the id of short link)
+            String analyticsSQL = "SELECT * FROM " + DatabaseHelper.ANALYTICS_TABLE
+                    + " WHERE " + DatabaseHelper.COL_ANALYTICS_ID + " = \"{short_link_id}\"";
+
+            //Run the query and get the cursor
+            Cursor shortLinkCursor = database.rawQuery(shortLinkSQL, null);
+
+            //Loop and get all values
+            while (shortLinkCursor.moveToNext()) {
+
+                //Get the id of short link
+                String shortLinkID = shortLinkCursor.getString(shortLinkCursor.getColumnIndex(DatabaseHelper.COL_SHORT_LINK_ID));
+
+                //Get the cursor for analytics corresponding to the particular shortLink ID
+                Cursor analyticsCursor = database.rawQuery(analyticsSQL.replace("{short_link_id}", shortLinkID), null);
+
+                //Loop and get the analytics object
+                while (analyticsCursor.moveToNext()) {
+                    String count = analyticsCursor.getString(analyticsCursor.getColumnIndex(DatabaseHelper.COL_ANALYTICS_ALL_TIME));
+                    totalClicks += Integer.parseInt(count);
+                }
+
+                //Close the cursor
+                analyticsCursor.close();
+            }
+
+            //Close the cursor
+            shortLinkCursor.close();
+
+            emitter.onNext(totalClicks);
+            emitter.onComplete();
+        });
+
+        return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 }

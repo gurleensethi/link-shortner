@@ -93,14 +93,28 @@ public class HomePresenter implements HomeContract.Presenter {
                 .subscribe(shortenedLinks -> {
                     List<ShortLink> shortLinks = shortenedLinks.getShortenedLinks();
 
-                    mMainView.onShortLinksReceived(
-                            shortLinks.size() >= Constants.MAX_HOME_SCREEN_LINKS ? shortLinks.subList(0, Constants.MAX_HOME_SCREEN_LINKS) : shortLinks
-                    );
+                    mMainView.onShortLinksReceived(shortLinks.size() >= Constants.MAX_HOME_SCREEN_LINKS ? shortLinks.subList(0, Constants.MAX_HOME_SCREEN_LINKS) : shortLinks);
+
+                    mMainView.setTotalShortenedLinks(shortLinks.size());
 
                     //Update the database with new links
                     DatabaseAPI.getInstance(mMainView.getAppContext()).insertShortLinkAsync(shortenedLinks.getShortenedLinks());
-                }, throwable -> {
 
+                    //Reload total clicks for new value
+                    loadTotalClicks();
+                }, throwable -> {
+                    loadTotalClicks();
+                });
+
+        compositeDisposable.add(disposable);
+    }
+
+    private void loadTotalClicks() {
+        //Create a disposable to get total number of clicks
+        Disposable disposable = DatabaseAPI.getInstance(mMainView.getAppContext())
+                .getTotalClicks()
+                .subscribe(count -> {
+                    mMainView.setTotalClicks(count);
                 });
 
         compositeDisposable.add(disposable);

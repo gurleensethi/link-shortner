@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -37,6 +39,16 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     TextView mNoShortenedLinksTextView;
     @BindView(R.id.view_all_links_linear_layout)
     LinearLayout mViewAllLinksLinearLayout;
+    @BindView(R.id.total_clicks_text_view)
+    TextView mTotalClicksTextView;
+    @BindView(R.id.total_links_shortened_text_view)
+    TextView mTotalLinksShortenedTextView;
+    @BindView(R.id.linear_layout)
+    LinearLayout mLinearLayout;
+    @BindView(R.id.edit_text_card_view)
+    CardView mEditTextCardView;
+    @BindView(R.id.link_edit_text)
+    EditText mLinkEditText;
 
     private HomeContract.Presenter mPresenter;
     private LinksRecyclerAdapter mLinksRecyclerAdapter;
@@ -72,7 +84,6 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
         mViewAllLinksLinearLayout.setOnClickListener(view -> {
             startActivity(AllLinksActivity.getIntent(getApplicationContext()));
         });
-
     }
 
     @Override
@@ -111,6 +122,16 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
             mLinksRecyclerView.setVisibility(View.GONE);
             mNoShortenedLinksTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void setTotalClicks(int count) {
+        mTotalClicksTextView.setText(String.valueOf(count));
+    }
+
+    @Override
+    public void setTotalShortenedLinks(int count) {
+        mTotalLinksShortenedTextView.setText(String.valueOf(count));
     }
 
     private void setUpOrRefreshRecyclerView(List<ShortLink> shortLinks) {

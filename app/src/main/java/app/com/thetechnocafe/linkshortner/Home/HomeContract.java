@@ -14,6 +14,10 @@ public class HomeContract {
         void requestNewToken(String token, String accountName);
 
         void onShortLinksReceived(List<ShortLink> shortLinks);
+
+        void setTotalClicks(int count);
+
+        void setTotalShortenedLinks(int count);
     }
 
     public interface Presenter extends BaseMVP.Presenter<HomeContract.View> {
