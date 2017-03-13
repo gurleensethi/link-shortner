@@ -10,8 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +25,8 @@ public class SignInActivity extends AppCompatActivity implements SignInContract.
 
     @BindView(R.id.shorten_link_without_account_text_view)
     TextView mShortenLinkWithoutAccountTextView;
-    @BindView(R.id.sign_in_button)
-    Button mSignInButton;
+    @BindView(R.id.sign_in_card_view)
+    CardView mSignInCardView;
 
     private static final int RC_ACCOUNT = 1;
     private static final int RC_ACCOUNT_PERMISSION = 2;
@@ -61,7 +61,7 @@ public class SignInActivity extends AppCompatActivity implements SignInContract.
             startActivity(LinkWithoutAccountActivity.getIntent(getApplicationContext()));
         });
 
-        mSignInButton.setOnClickListener(view -> {
+        mSignInCardView.setOnClickListener(view -> {
             //Start account selection intent
             Intent intent = AccountManager.newChooseAccountIntent(null, null, new String[]{"com.google"}, false, null, null, null, null);
             startActivityForResult(intent, RC_ACCOUNT);
