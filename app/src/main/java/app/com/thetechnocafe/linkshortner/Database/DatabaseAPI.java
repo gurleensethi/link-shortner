@@ -100,9 +100,6 @@ public class DatabaseAPI {
         database.insert(DatabaseHelper.SHORT_LINK_TABLE, null, shortLinkContentValues);
         database.insert(DatabaseHelper.ANALYTICS_TABLE, null, analyticsContentValues);
 
-        //Close database
-        database.close();
-
         Log.d(TAG, "Stored link : " + shortLink.getId());
     }
 
@@ -116,11 +113,17 @@ public class DatabaseAPI {
     }
 
     //Insert a List of ShortLink on a IO thread using RxJAVA
-    public void insertShortLinkAsync(List<ShortLink> shortLinksList) {
-        Observable.fromIterable(shortLinksList)
+    public Observable insertShortLinkAsync(List<ShortLink> shortLinksList) {
+        Observable observable = Observable.fromIterable(shortLinksList)
                 .filter(shortLinkAlreadyExistsPredicate)
+                .map(shortLink -> {
+                    insertLink(shortLink);
+                    return shortLink;
+                })
                 .subscribeOn(Schedulers.io())
-                .subscribe(this::insertLink);
+                .observeOn(AndroidSchedulers.mainThread());
+
+        return observable;
     }
 
     /**

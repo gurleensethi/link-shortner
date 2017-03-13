@@ -1,5 +1,7 @@
 package app.com.thetechnocafe.linkshortner.Home;
 
+import android.util.Log;
+
 import java.util.List;
 
 import app.com.thetechnocafe.linkshortner.Database.DatabaseAPI;
@@ -17,7 +19,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class HomePresenter implements HomeContract.Presenter {
-
+    private static final String TAG = HomePresenter.class.getSimpleName();
     private HomeContract.View mMainView;
     private CompositeDisposable compositeDisposable;
 
@@ -98,10 +100,17 @@ public class HomePresenter implements HomeContract.Presenter {
                     mMainView.setTotalShortenedLinks(shortLinks.size());
 
                     //Update the database with new links
-                    DatabaseAPI.getInstance(mMainView.getAppContext()).insertShortLinkAsync(shortenedLinks.getShortenedLinks());
+                    DatabaseAPI.getInstance(mMainView.getAppContext())
+                            .insertShortLinkAsync(shortenedLinks.getShortenedLinks())
+                            .subscribe(
+                                    o -> {
+                                    },
+                                    throwable -> {
+                                        Log.d(TAG, "Error while inserting data in Database");
 
-                    //Reload total clicks for new value
-                    loadTotalClicks();
+                                    },
+                                    () -> loadTotalClicks()
+                            );
                 }, throwable -> {
                     loadTotalClicks();
                 });
