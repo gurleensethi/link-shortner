@@ -18,11 +18,17 @@ public class HomeContract {
         void setTotalClicks(int count);
 
         void setTotalShortenedLinks(int count);
+
+        void onLinkShortened(String shortUrl, String longUrl);
+
+        void onLinkShortenError();
     }
 
     public interface Presenter extends BaseMVP.Presenter<HomeContract.View> {
         void saveNewToken(String token);
 
         void signOut();
+
+        void shortenUrl(String longUrl);
     }
 }

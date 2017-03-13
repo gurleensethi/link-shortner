@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.List;
 
 import app.com.thetechnocafe.linkshortner.Database.DatabaseAPI;
+import app.com.thetechnocafe.linkshortner.Models.LongLinkPOSTModel;
 import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortLink;
 import app.com.thetechnocafe.linkshortner.Networking.NetworkService;
 import app.com.thetechnocafe.linkshortner.Utilities.AuthPreferences;
@@ -73,6 +74,26 @@ public class HomePresenter implements HomeContract.Presenter {
         DatabaseAPI.getInstance(mMainView.getAppContext()).deleteAllData();
     }
 
+    @Override
+    public void shortenUrl(String longUrl) {
+        //Create long url model
+        LongLinkPOSTModel longLinkPOSTModel = new LongLinkPOSTModel(longUrl);
+
+        Disposable disposable = NetworkService.getInstance()
+                .getLinkShortenerAPI()
+                .getShortenedLinkWithAuth(AuthPreferences.getInstance().getAuthToken(mMainView.getAppContext()), Constants.APPLICATION_JSON, longLinkPOSTModel)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shortenedLinkModel -> {
+                    mMainView.onLinkShortened(shortenedLinkModel.getId(), shortenedLinkModel.getLongUrl());
+                }, throwable -> {
+                    mMainView.onLinkShortenError();
+                    throwable.printStackTrace();
+                });
+
+        compositeDisposable.add(disposable);
+    }
+
     private void loadLinksFromDatabase() {
         //Create a disposable to get all the links from database
         Disposable disposable = DatabaseAPI.getInstance(mMainView.getAppContext())
@@ -100,7 +121,7 @@ public class HomePresenter implements HomeContract.Presenter {
                     mMainView.setTotalShortenedLinks(shortLinks.size());
 
                     //Update the database with new links
-                    DatabaseAPI.getInstance(mMainView.getAppContext())
+                    Disposable insertDataDisposable = DatabaseAPI.getInstance(mMainView.getAppContext())
                             .insertShortLinkAsync(shortenedLinks.getShortenedLinks())
                             .subscribe(
                                     o -> {
@@ -109,8 +130,10 @@ public class HomePresenter implements HomeContract.Presenter {
                                         Log.d(TAG, "Error while inserting data in Database");
 
                                     },
-                                    () -> loadTotalClicks()
+                                    this::loadTotalClicks
                             );
+
+                    compositeDisposable.add(insertDataDisposable);
                 }, throwable -> {
                     loadTotalClicks();
                 });

@@ -19,6 +19,9 @@ public interface GoogleLinkShortenerAPI {
     @POST("url?key=AIzaSyCc1i6J2DwNqinDnJlr2AXnKlNJrLrgqkY")
     Observable<ShortenedLinkModel> getShortenedLink(@Body LongLinkPOSTModel longUrl);
 
+    @POST("url")
+    Observable<ShortenedLinkModel> getShortenedLinkWithAuth(@Header(Constants.AUTHORIZATION) String authKey, @Header(Constants.CONTENT_TYPE) String contentType, @Body LongLinkPOSTModel longUrl);
+
     @GET("url/history")
     Observable<ShortenedLinks> getListOfShortenedLinks(@Header(Constants.AUTHORIZATION) String authKey, @Query("projection") String projection);
 }

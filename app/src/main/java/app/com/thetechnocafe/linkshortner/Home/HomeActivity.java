@@ -2,9 +2,13 @@ package app.com.thetechnocafe.linkshortner.Home;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.transition.TransitionManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,9 +19,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -49,10 +58,25 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     CardView mEditTextCardView;
     @BindView(R.id.link_edit_text)
     EditText mLinkEditText;
+    @BindView(R.id.shorten_link_image_button)
+    ImageButton mShortenLinkImageButton;
+    @BindView(R.id.short_link_progress_bar)
+    ProgressBar mShortLinkProgressBar;
+    @BindView(R.id.link_details_card_view)
+    CardView mLinkDetailsCardView;
+    @BindView(R.id.original_link_text_view)
+    TextView mOriginalLinkTextView;
+    @BindView(R.id.shortened_link_text_view)
+    TextView mShortenedLinkTextView;
+    @BindView(R.id.copy_link_image_view)
+    ImageView mCopyLinkImageView;
+    @BindView(R.id.share_link_image_view)
+    ImageView mShareLinkImageView;
 
     private HomeContract.Presenter mPresenter;
     private LinksRecyclerAdapter mLinksRecyclerAdapter;
     private AccountManager mAccountManager;
+    private static final String CLIPBOARD_SHORT_LINK_LABEL = "shortened link";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +107,26 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
 
         mViewAllLinksLinearLayout.setOnClickListener(view -> {
             startActivity(AllLinksActivity.getIntent(getApplicationContext()));
+        });
+
+        mShortenLinkImageButton.setOnClickListener(view -> {
+            //Check if the link is not empty
+            String longUrl = mLinkEditText.getText().toString();
+
+            if (longUrl.length() == 0) {
+                mLinkEditText.requestFocus();
+                mLinkEditText.setError("Url cannot be empty");
+                return;
+            }
+
+            //Hide the card layout
+            TransitionManager.beginDelayedTransition(mLinearLayout);
+            mLinkDetailsCardView.setVisibility(View.GONE);
+
+            toggleProgress(true);
+            hideSoftKeyboard();
+
+            mPresenter.shortenUrl(longUrl);
         });
     }
 
@@ -132,6 +176,46 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     @Override
     public void setTotalShortenedLinks(int count) {
         mTotalLinksShortenedTextView.setText(String.valueOf(count));
+    }
+
+    @Override
+    public void onLinkShortened(String shortUrl, String longUrl) {
+        mOriginalLinkTextView.setText(longUrl);
+        mShortenedLinkTextView.setText(shortUrl);
+
+        mCopyLinkImageView.setOnClickListener(view -> {
+            //Get the shortened text from text view
+            String shortenedLink = mShortenedLinkTextView.getText().toString();
+
+            //Get the clipboard manager service
+            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+
+            //Create clip data from text
+            ClipData clipData = ClipData.newPlainText(CLIPBOARD_SHORT_LINK_LABEL, shortenedLink);
+
+            clipboardManager.setPrimaryClip(clipData);
+
+            Toast.makeText(getApplicationContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+        });
+
+        mShareLinkImageView.setOnClickListener(view -> {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, shortUrl);
+            intent.setType("text/plain");
+            startActivity(intent);
+        });
+
+        //Animate
+        TransitionManager.beginDelayedTransition(mLinearLayout);
+        mLinkDetailsCardView.setVisibility(View.VISIBLE);
+
+        toggleProgress(false);
+    }
+
+    @Override
+    public void onLinkShortenError() {
+        toggleProgress(false);
+        Snackbar.make(mLinearLayout, "Unable to shorten link", Snackbar.LENGTH_SHORT).show();
     }
 
     private void setUpOrRefreshRecyclerView(List<ShortLink> shortLinks) {
@@ -205,5 +289,24 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void toggleProgress(boolean isLoading) {
+        if (isLoading) {
+            mShortLinkProgressBar.setVisibility(View.VISIBLE);
+            mShortenLinkImageButton.setVisibility(View.GONE);
+        } else {
+            mShortLinkProgressBar.setVisibility(View.GONE);
+            mShortenLinkImageButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideSoftKeyboard() {
+        View view = getCurrentFocus();
+
+        if (view != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }
