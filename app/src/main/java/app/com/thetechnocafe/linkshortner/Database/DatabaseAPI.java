@@ -153,7 +153,8 @@ public class DatabaseAPI {
             List<ShortLink> shortLinksList = new ArrayList<>();
 
             //SQL to get all links
-            String shortLinkSQL = "SELECT * FROM " + DatabaseHelper.SHORT_LINK_TABLE;
+            String shortLinkSQL = "SELECT * FROM " + DatabaseHelper.SHORT_LINK_TABLE +
+                    " ORDER BY " + DatabaseHelper.COL_SHORT_LINK_CREATED + " DESC";
 
             if (maxLinks != 0) {
                 shortLinkSQL += " LIMIT " + maxLinks;
