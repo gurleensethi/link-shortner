@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -72,6 +73,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     ImageView mCopyLinkImageView;
     @BindView(R.id.share_link_image_view)
     ImageView mShareLinkImageView;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     private HomeContract.Presenter mPresenter;
     private LinksRecyclerAdapter mLinksRecyclerAdapter;
@@ -128,6 +131,11 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
 
             mPresenter.shortenUrl(longUrl);
         });
+
+        //Configure Swipe refresh layout
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.md_red_500, R.color.md_blue_500, R.color.md_green_500, R.color.md_yellow_500, R.color.md_white_1000);
+        mSwipeRefreshLayout.setOnRefreshListener(() -> mPresenter.reloadLinks());
+
     }
 
     @Override
@@ -216,6 +224,16 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     public void onLinkShortenError() {
         toggleProgress(false);
         Snackbar.make(mLinearLayout, "Unable to shorten link", Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void startRefreshing() {
+        mSwipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void stopRefreshing() {
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private void setUpOrRefreshRecyclerView(List<ShortLink> shortLinks) {

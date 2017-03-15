@@ -22,6 +22,10 @@ public class HomeContract {
         void onLinkShortened(String shortUrl, String longUrl);
 
         void onLinkShortenError();
+
+        void startRefreshing();
+
+        void stopRefreshing();
     }
 
     public interface Presenter extends BaseMVP.Presenter<HomeContract.View> {
@@ -30,5 +34,7 @@ public class HomeContract {
         void signOut();
 
         void shortenUrl(String longUrl);
+
+        void reloadLinks();
     }
 }

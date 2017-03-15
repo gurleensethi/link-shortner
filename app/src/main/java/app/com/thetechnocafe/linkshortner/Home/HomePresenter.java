@@ -36,6 +36,9 @@ public class HomePresenter implements HomeContract.Presenter {
         );
 
         compositeDisposable = new CompositeDisposable();
+
+        //Start the swipe refresh layout
+        mMainView.startRefreshing();
     }
 
     @Override
@@ -94,6 +97,11 @@ public class HomePresenter implements HomeContract.Presenter {
         compositeDisposable.add(disposable);
     }
 
+    @Override
+    public void reloadLinks() {
+        loadLinksFromDatabase();
+    }
+
     private void loadLinksFromDatabase() {
         //Create a disposable to get all the links from database
         Disposable disposable = DatabaseAPI.getInstance(mMainView.getAppContext())
@@ -129,9 +137,12 @@ public class HomePresenter implements HomeContract.Presenter {
                                     throwable -> {
                                         ((Exception) throwable).printStackTrace();
                                         Log.d(TAG, "Error while inserting data in Database : " + throwable.toString());
-
+                                        mMainView.stopRefreshing();
                                     },
-                                    this::loadTotalClicks
+                                    () -> {
+                                        mMainView.stopRefreshing();
+                                        loadTotalClicks();
+                                    }
                             );
 
                     compositeDisposable.add(insertDataDisposable);
