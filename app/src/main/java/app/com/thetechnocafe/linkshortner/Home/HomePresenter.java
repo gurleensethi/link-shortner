@@ -127,7 +127,8 @@ public class HomePresenter implements HomeContract.Presenter {
                                     o -> {
                                     },
                                     throwable -> {
-                                        Log.d(TAG, "Error while inserting data in Database");
+                                        ((Exception) throwable).printStackTrace();
+                                        Log.d(TAG, "Error while inserting data in Database : " + throwable.toString());
 
                                     },
                                     this::loadTotalClicks

@@ -42,7 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COL_SHORT_LINK_ID + " VARCHAR PRIMARY KEY, "
                 + COL_SHORT_LINK_LONG_URL + " VARCHAR, "
                 + COL_SHORT_LINK_STATUS + " VARCHAR, "
-                + COL_SHORT_LINK_CREATED + " VARCHAR);";
+                + COL_SHORT_LINK_CREATED + " NUMERIC);";
 
         sqLiteDatabase.execSQL(shortLinkSQL);
 

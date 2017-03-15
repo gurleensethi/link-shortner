@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,8 +82,18 @@ public class DatabaseAPI {
         shortLinkContentValues.put(DatabaseHelper.COL_SHORT_LINK_KIND, shortLink.getKind());
         shortLinkContentValues.put(DatabaseHelper.COL_SHORT_LINK_ID, shortLink.getId());
         shortLinkContentValues.put(DatabaseHelper.COL_SHORT_LINK_LONG_URL, shortLink.getLongUrl());
-        shortLinkContentValues.put(DatabaseHelper.COL_SHORT_LINK_CREATED, shortLink.getCreated());
         shortLinkContentValues.put(DatabaseHelper.COL_SHORT_LINK_STATUS, shortLink.getStatus());
+
+        //Convert date to long
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+        long time = 0l;
+        try {
+            time = simpleDateFormat.parse(shortLink.getCreated().split("\\.")[0]).getTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        shortLinkContentValues.put(DatabaseHelper.COL_SHORT_LINK_CREATED, time);
 
         //Create the content values for analytics and add data
         ContentValues analyticsContentValues = new ContentValues();
