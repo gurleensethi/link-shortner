@@ -64,6 +64,11 @@ public class DatabaseAPI {
 
             boolean result = cursor.getCount() == 0;
 
+            //If exists in database then update details
+            if (!result) {
+                updateShortLinkDetails(shortLink);
+            }
+
             //Close cursor and database
             cursor.close();
 
@@ -285,5 +290,44 @@ public class DatabaseAPI {
         });
 
         return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * Update an already existing short link
+     *
+     * @param shortLink Short link with updated details
+     */
+    private void updateShortLinkDetails(ShortLink shortLink) {
+        //Create the content values for short link and add data
+        ContentValues shortLinkContentValues = new ContentValues();
+        shortLinkContentValues.put(DatabaseHelper.COL_SHORT_LINK_ID, shortLink.getId());
+        shortLinkContentValues.put(DatabaseHelper.COL_SHORT_LINK_LONG_URL, shortLink.getLongUrl());
+        shortLinkContentValues.put(DatabaseHelper.COL_SHORT_LINK_STATUS, shortLink.getStatus());
+
+        //Convert date to long
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+        long time = 0l;
+        try {
+            time = simpleDateFormat.parse(shortLink.getCreated().split("\\.")[0]).getTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        shortLinkContentValues.put(DatabaseHelper.COL_SHORT_LINK_CREATED, time);
+
+        //Create the content values for analytics and add data
+        ContentValues analyticsContentValues = new ContentValues();
+        analyticsContentValues.put(DatabaseHelper.COL_ANALYTICS_ALL_TIME, shortLink.getAnalytics().getAllTime().getShortUrlClicks());
+        analyticsContentValues.put(DatabaseHelper.COL_ANALYTICS_DAY, shortLink.getAnalytics().getDay().getShortUrlClicks());
+        analyticsContentValues.put(DatabaseHelper.COL_ANALYTICS_MONTH, shortLink.getAnalytics().getMonth().getShortUrlClicks());
+        analyticsContentValues.put(DatabaseHelper.COL_ANALYTICS_WEEK, shortLink.getAnalytics().getWeek().getShortUrlClicks());
+        analyticsContentValues.put(DatabaseHelper.COL_ANALYTICS_TWO_HOURS, shortLink.getAnalytics().getTwoHours().getShortUrlClicks());
+
+        //Insert in database
+        //Get the database
+        SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
+
+        database.update(DatabaseHelper.SHORT_LINK_TABLE, shortLinkContentValues, DatabaseHelper.COL_SHORT_LINK_ID + " = ?", new String[]{shortLink.getId()});
+        database.update(DatabaseHelper.ANALYTICS_TABLE, analyticsContentValues, DatabaseHelper.COL_ANALYTICS_ID + " = ?", new String[]{shortLink.getId()});
     }
 }
