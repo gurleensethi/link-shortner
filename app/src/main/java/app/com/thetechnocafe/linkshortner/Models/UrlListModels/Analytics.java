@@ -22,6 +22,14 @@ public class Analytics {
     @Expose
     private TwoHours twoHours;
 
+    public Analytics() {
+        allTime = new AllTime();
+        month = new Month();
+        week = new Week();
+        day = new Day();
+        twoHours = new TwoHours();
+    }
+
     public AllTime getAllTime() {
         return allTime;
     }

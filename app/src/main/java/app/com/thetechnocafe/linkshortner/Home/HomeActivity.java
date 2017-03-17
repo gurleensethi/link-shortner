@@ -311,9 +311,11 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
 
     private void toggleProgress(boolean isLoading) {
         if (isLoading) {
+            mLinkEditText.setEnabled(false);
             mShortLinkProgressBar.setVisibility(View.VISIBLE);
             mShortenLinkImageButton.setVisibility(View.GONE);
         } else {
+            mLinkEditText.setEnabled(true);
             mShortLinkProgressBar.setVisibility(View.GONE);
             mShortenLinkImageButton.setVisibility(View.VISIBLE);
         }

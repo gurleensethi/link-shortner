@@ -330,4 +330,32 @@ public class DatabaseAPI {
         database.update(DatabaseHelper.SHORT_LINK_TABLE, shortLinkContentValues, DatabaseHelper.COL_SHORT_LINK_ID + " = ?", new String[]{shortLink.getId()});
         database.update(DatabaseHelper.ANALYTICS_TABLE, analyticsContentValues, DatabaseHelper.COL_ANALYTICS_ID + " = ?", new String[]{shortLink.getId()});
     }
+
+    /**
+     * Get the total number of shortned links in the database
+     */
+    public Observable<Integer> getTotalShortenedLinks() {
+        Observable<Integer> observable = Observable.create(emitter -> {
+            int totalLinks = 0;
+
+            //Get the database
+            SQLiteDatabase database = mDatabaseHelper.getReadableDatabase();
+
+            //SQL to get all links
+            String shortLinkSQL = "SELECT * FROM " + DatabaseHelper.SHORT_LINK_TABLE;
+
+            //Run the query and get the cursor
+            Cursor shortLinkCursor = database.rawQuery(shortLinkSQL, null);
+
+            totalLinks = shortLinkCursor.getCount();
+
+            //Close the cursor
+            shortLinkCursor.close();
+
+            emitter.onNext(totalLinks);
+            emitter.onComplete();
+        });
+
+        return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
 }

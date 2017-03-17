@@ -6,6 +6,7 @@ import java.util.List;
 
 import app.com.thetechnocafe.linkshortner.Database.DatabaseAPI;
 import app.com.thetechnocafe.linkshortner.Models.LongLinkPOSTModel;
+import app.com.thetechnocafe.linkshortner.Models.UrlListModels.Analytics;
 import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortLink;
 import app.com.thetechnocafe.linkshortner.Networking.NetworkService;
 import app.com.thetechnocafe.linkshortner.Utilities.AuthPreferences;
@@ -88,6 +89,19 @@ public class HomePresenter implements HomeContract.Presenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shortenedLinkModel -> {
+                    //Create a short link model
+                    ShortLink shortLink = new ShortLink();
+                    shortLink.setId(shortenedLinkModel.getId());
+                    shortLink.setKind(shortenedLinkModel.getKind());
+                    shortLink.setLongUrl(shortenedLinkModel.getLongUrl());
+                    shortLink.setAnalytics(new Analytics());
+
+                    //Add the shorten url to database
+                    DatabaseAPI.getInstance(mMainView.getAppContext())
+                            .insertShortLinkAsync(shortLink);
+
+                    loadLinksFromDatabase();
+
                     mMainView.onLinkShortened(shortenedLinkModel.getId(), shortenedLinkModel.getLongUrl());
                 }, throwable -> {
                     mMainView.onLinkShortenError();
@@ -126,8 +140,6 @@ public class HomePresenter implements HomeContract.Presenter {
 
                     mMainView.onShortLinksReceived(shortLinks.size() >= Constants.MAX_HOME_SCREEN_LINKS ? shortLinks.subList(0, Constants.MAX_HOME_SCREEN_LINKS) : shortLinks);
 
-                    mMainView.setTotalShortenedLinks(shortLinks.size());
-
                     //Update the database with new links
                     Disposable insertDataDisposable = DatabaseAPI.getInstance(mMainView.getAppContext())
                             .insertShortLinkAsync(shortenedLinks.getShortenedLinks())
@@ -142,12 +154,14 @@ public class HomePresenter implements HomeContract.Presenter {
                                     () -> {
                                         mMainView.stopRefreshing();
                                         loadTotalClicks();
+                                        loadTotalShortenedLinks();
                                     }
                             );
 
                     compositeDisposable.add(insertDataDisposable);
                 }, throwable -> {
                     loadTotalClicks();
+                    loadTotalShortenedLinks();
                 });
 
         compositeDisposable.add(disposable);
@@ -159,6 +173,17 @@ public class HomePresenter implements HomeContract.Presenter {
                 .getTotalClicks()
                 .subscribe(count -> {
                     mMainView.setTotalClicks(count);
+                });
+
+        compositeDisposable.add(disposable);
+    }
+
+    private void loadTotalShortenedLinks() {
+        //Create a disposable to get total number of clicks
+        Disposable disposable = DatabaseAPI.getInstance(mMainView.getAppContext())
+                .getTotalShortenedLinks()
+                .subscribe(count -> {
+                    mMainView.setTotalShortenedLinks(count);
                 });
 
         compositeDisposable.add(disposable);
