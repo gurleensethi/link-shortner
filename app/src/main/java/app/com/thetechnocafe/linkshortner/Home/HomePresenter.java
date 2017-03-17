@@ -2,8 +2,6 @@ package app.com.thetechnocafe.linkshortner.Home;
 
 import android.util.Log;
 
-import java.util.List;
-
 import app.com.thetechnocafe.linkshortner.Database.DatabaseAPI;
 import app.com.thetechnocafe.linkshortner.Models.LongLinkPOSTModel;
 import app.com.thetechnocafe.linkshortner.Models.UrlListModels.Analytics;
@@ -131,18 +129,15 @@ public class HomePresenter implements HomeContract.Presenter {
     private void loadLinksFromNetwork() {
         //Create a disposable to get all the links from network
         Disposable disposable = NetworkService.getInstance()
-                .getLinkShortenerAPI()
-                .getListOfShortenedLinks(AuthPreferences.getInstance().getAuthToken(mMainView.getAppContext()), "FULL")
+                .getAllLinksFromAPI(AuthPreferences.getInstance().getAuthToken(mMainView.getAppContext()), "FULL")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(shortenedLinks -> {
-                    List<ShortLink> shortLinks = shortenedLinks.getShortenedLinks();
-
+                .subscribe(shortLinks -> {
                     mMainView.onShortLinksReceived(shortLinks.size() >= Constants.MAX_HOME_SCREEN_LINKS ? shortLinks.subList(0, Constants.MAX_HOME_SCREEN_LINKS) : shortLinks);
 
                     //Update the database with new links
                     Disposable insertDataDisposable = DatabaseAPI.getInstance(mMainView.getAppContext())
-                            .insertShortLinkAsync(shortenedLinks.getShortenedLinks())
+                            .insertShortLinkAsync(shortLinks)
                             .subscribe(
                                     o -> {
                                     },

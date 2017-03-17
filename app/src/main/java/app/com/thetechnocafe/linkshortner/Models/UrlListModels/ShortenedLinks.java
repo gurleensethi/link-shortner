@@ -20,6 +20,9 @@ public class ShortenedLinks {
     @SerializedName("items")
     @Expose
     private List<ShortLink> shortenedLinks = null;
+    @SerializedName("nextPageToken")
+    @Expose
+    private String nextPageToken;
 
     public String getKind() {
         return kind;
@@ -51,5 +54,13 @@ public class ShortenedLinks {
 
     public void setShortenedLinks(List<ShortLink> shortenedLinks) {
         this.shortenedLinks = shortenedLinks;
+    }
+
+    public String getNextPageToken() {
+        return nextPageToken;
+    }
+
+    public void setNextPageToken(String nextPageToken) {
+        this.nextPageToken = nextPageToken;
     }
 }

@@ -24,4 +24,7 @@ public interface GoogleLinkShortenerAPI {
 
     @GET("url/history")
     Observable<ShortenedLinks> getListOfShortenedLinks(@Header(Constants.AUTHORIZATION) String authKey, @Query("projection") String projection);
+
+    @GET("url/history")
+    Observable<ShortenedLinks> getListOfShortenedLinksWithStartToken(@Header(Constants.AUTHORIZATION) String authKey, @Query("projection") String projection, @Query("start-token") String startToken);
 }
