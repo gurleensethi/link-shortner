@@ -1,5 +1,7 @@
 package app.com.thetechnocafe.linkshortner.Networking;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class NetworkService {
+    private static final String TAG = NetworkService.class.getSimpleName();
     private static NetworkService mInstance;
     private static String baseUrl = "https://www.googleapis.com/urlshortener/v1/";
     private Retrofit mRetrofit;
@@ -62,7 +65,7 @@ public class NetworkService {
 
                         emitter.onNext(shortLinks);
                     }, throwable -> {
-
+                        Log.d(TAG, throwable.toString());
                     });
         });
 
@@ -84,6 +87,8 @@ public class NetworkService {
                     if (shortenedLinks.getNextPageToken() != null) {
                         getLinksWithStartToken(authToken, projection, shortenedLinks.getNextPageToken(), shortLinks);
                     }
+                }, throwable -> {
+                    Log.d(TAG, throwable.toString());
                 });
     }
 }
