@@ -61,6 +61,8 @@ public class NetworkService {
                         }
 
                         emitter.onNext(shortLinks);
+                    }, throwable -> {
+
                     });
         });
 

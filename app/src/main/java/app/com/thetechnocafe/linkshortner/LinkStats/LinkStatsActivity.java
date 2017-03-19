@@ -1,8 +1,9 @@
 package app.com.thetechnocafe.linkshortner.LinkStats;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.StatsModel;
@@ -13,6 +14,12 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
 
     public static final String EXTRA_SHORT_LINK = "short_link";
     private LinkStatsContract.Presenter mPresenter;
+
+    public static Intent getIntent(Context context, String shortLink) {
+        Intent intent = new Intent(context, LinkStatsActivity.class);
+        intent.putExtra(EXTRA_SHORT_LINK, shortLink);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

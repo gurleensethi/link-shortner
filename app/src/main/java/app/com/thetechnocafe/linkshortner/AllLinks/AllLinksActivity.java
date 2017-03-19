@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import java.util.List;
 
 import app.com.thetechnocafe.linkshortner.Adapters.AllLinksRecyclerAdapter;
+import app.com.thetechnocafe.linkshortner.LinkStats.LinkStatsActivity;
 import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortLink;
 import app.com.thetechnocafe.linkshortner.R;
 import butterknife.BindView;
@@ -80,6 +81,8 @@ public class AllLinksActivity extends AppCompatActivity implements AllLinksContr
         if (mAllLinksRecyclerAdapter == null) {
             mAllLinksRecyclerAdapter = new AllLinksRecyclerAdapter(this, shortLinks);
             mShortLinksRecyclerView.setAdapter(mAllLinksRecyclerAdapter);
+            mAllLinksRecyclerAdapter.setOnLinkClickListener(shortLink -> startActivity(LinkStatsActivity.getIntent(AllLinksActivity.this, shortLink.getId())));
+
         } else {
             mAllLinksRecyclerAdapter.notifyDataSetChanged();
         }
