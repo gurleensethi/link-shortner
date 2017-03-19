@@ -25,7 +25,8 @@
         </activity>
         <activity android:name=".LinkWithoutAccount.LinkWithoutAccountActivity" />
         <activity android:name=".Home.HomeActivity" />
-        <activity android:name=".AllLinks.AllLinksActivity"></activity>
+        <activity android:name=".AllLinks.AllLinksActivity" />
+        <activity android:name=".LinkStats.LinkStatsActivity"></activity>
     </application>
 
 </manifest>

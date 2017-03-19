@@ -1,5 +1,6 @@
 package app.com.thetechnocafe.linkshortner.Networking;
 
+import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.StatsModel;
 import app.com.thetechnocafe.linkshortner.Models.LongLinkPOSTModel;
 import app.com.thetechnocafe.linkshortner.Models.ShortenedLinkModel;
 import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortenedLinks;
@@ -27,4 +28,7 @@ public interface GoogleLinkShortenerAPI {
 
     @GET("url/history")
     Observable<ShortenedLinks> getListOfShortenedLinksWithStartToken(@Header(Constants.AUTHORIZATION) String authKey, @Query("projection") String projection, @Query("start-token") String startToken);
+
+    @GET("url")
+    Observable<StatsModel> getStatsForShortLink(@Query("key") String apiKey, @Query("shortUrl") String shortUrl, @Query("projection") String projection);
 }

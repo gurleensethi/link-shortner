@@ -3,7 +3,6 @@ package app.com.thetechnocafe.linkshortner.Models.LinkStatsModel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import app.com.thetechnocafe.linkshortner.Models.UrlListModels.Analytics;
 
 /**
  * Created by gurleensethi on 19/03/17.
