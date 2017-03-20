@@ -3,18 +3,19 @@ package app.com.thetechnocafe.linkshortner.LinkStats;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +31,8 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.platforms_bar_chart)
-    BarChart mPlatformBarChart;
+    @BindView(R.id.platforms_horizontal_bar_chart)
+    HorizontalBarChart mPlatformHorizontalBarChart;
     @BindView(R.id.platforms_progress_frame_layout)
     FrameLayout mPlatformsProgressFrameLayout;
 
@@ -115,7 +116,7 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
 
             //Create bar data set
             BarDataSet barDataSet = new BarDataSet(barEntries, "Platforms");
-            barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);    //Change bar colors
+            barDataSet.setColor(ContextCompat.getColor(this, R.color.md_blue_500));    //Change bar colors
 
             //Create bar data from bar data set
             BarData barData = new BarData(barDataSet);
@@ -123,26 +124,28 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
             Description description = new Description();
             description.setText("");
 
-            mPlatformBarChart.setData(barData);
-            mPlatformBarChart.getXAxis().setValueFormatter((value, axis) -> labels.get((int) value));   //Labels for X-Axis
-            mPlatformBarChart.setDescription(description);  //Set the description
+            mPlatformHorizontalBarChart.setData(barData);
+            mPlatformHorizontalBarChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+            mPlatformHorizontalBarChart.setDescription(description);  //Set the description
+            mPlatformHorizontalBarChart.getXAxis().setGranularityEnabled(true);
+            mPlatformHorizontalBarChart.getXAxis().setGranularity(1f);
 
             //Hide all the axis in the chart
-            mPlatformBarChart.getXAxis().setDrawGridLines(false);
-            mPlatformBarChart.getXAxis().setDrawAxisLine(false);
-            mPlatformBarChart.getAxisLeft().setDrawGridLines(false);
-            mPlatformBarChart.getAxisLeft().setDrawAxisLine(false);
-            mPlatformBarChart.getAxisRight().setEnabled(false);
+            mPlatformHorizontalBarChart.getXAxis().setDrawGridLines(false);
+            mPlatformHorizontalBarChart.getXAxis().setDrawAxisLine(false);
+            mPlatformHorizontalBarChart.getAxisLeft().setDrawGridLines(false);
+            mPlatformHorizontalBarChart.getAxisLeft().setDrawAxisLine(false);
+            mPlatformHorizontalBarChart.getAxisRight().setEnabled(false);
 
-            mPlatformBarChart.animateXY(Constants.GRAPH_ANIMATION_DURATION, Constants.GRAPH_ANIMATION_DURATION);    //Animate Chart
+            mPlatformHorizontalBarChart.animateXY(Constants.GRAPH_ANIMATION_DURATION, Constants.GRAPH_ANIMATION_DURATION);    //Animate Chart
 
         }
 
         //Refresh the bar chart
-        mPlatformBarChart.invalidate();
+        mPlatformHorizontalBarChart.invalidate();
 
         //Toggle visibility of Progress and Content layout
-        mPlatformBarChart.setVisibility(View.VISIBLE);
+        mPlatformHorizontalBarChart.setVisibility(View.VISIBLE);
         mPlatformsProgressFrameLayout.setVisibility(View.GONE);
     }
 }

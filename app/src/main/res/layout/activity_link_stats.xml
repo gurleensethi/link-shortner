@@ -52,13 +52,13 @@
                         android:textColor="@color/md_black_1000"
                         android:textSize="16sp" />
 
-                    <com.github.mikephil.charting.charts.BarChart
-                        android:id="@+id/platforms_bar_chart"
+                    <com.github.mikephil.charting.charts.HorizontalBarChart
+                        android:id="@+id/platforms_horizontal_bar_chart"
                         android:layout_width="match_parent"
                         android:layout_height="240dp"
                         android:visibility="gone">
 
-                    </com.github.mikephil.charting.charts.BarChart>
+                    </com.github.mikephil.charting.charts.HorizontalBarChart>
 
                     <FrameLayout
                         android:id="@+id/platforms_progress_frame_layout"
