@@ -99,39 +99,44 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
 
     //Display the data set in a Bar Chart (MPChart Library)
     private void setUpPlatformBarChart(List<Platform> platforms) {
-        //Create bar entries and bar labels
-        List<BarEntry> barEntries = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
+        //Check if data is available
+        if (platforms != null) {
 
-        //Iterate over values and add values to barEntries and labels
-        for (int i = 0; i < platforms.size(); i++) {
-            Platform platform = platforms.get(i);
-            barEntries.add(new BarEntry((float) i, Float.parseFloat(platform.getCount())));
-            labels.add(platform.getId());
+            //Create bar entries and bar labels
+            List<BarEntry> barEntries = new ArrayList<>();
+            List<String> labels = new ArrayList<>();
+
+            //Iterate over values and add values to barEntries and labels
+            for (int i = 0; i < platforms.size(); i++) {
+                Platform platform = platforms.get(i);
+                barEntries.add(new BarEntry((float) i, Float.parseFloat(platform.getCount())));
+                labels.add(platform.getId());
+            }
+
+            //Create bar data set
+            BarDataSet barDataSet = new BarDataSet(barEntries, "Platforms");
+            barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);    //Change bar colors
+
+            //Create bar data from bar data set
+            BarData barData = new BarData(barDataSet);
+
+            Description description = new Description();
+            description.setText("");
+
+            mPlatformBarChart.setData(barData);
+            mPlatformBarChart.getXAxis().setValueFormatter((value, axis) -> labels.get((int) value));   //Labels for X-Axis
+            mPlatformBarChart.setDescription(description);  //Set the description
+
+            //Hide all the axis in the chart
+            mPlatformBarChart.getXAxis().setDrawGridLines(false);
+            mPlatformBarChart.getXAxis().setDrawAxisLine(false);
+            mPlatformBarChart.getAxisLeft().setDrawGridLines(false);
+            mPlatformBarChart.getAxisLeft().setDrawAxisLine(false);
+            mPlatformBarChart.getAxisRight().setEnabled(false);
+
+            mPlatformBarChart.animateXY(Constants.GRAPH_ANIMATION_DURATION, Constants.GRAPH_ANIMATION_DURATION);    //Animate Chart
+
         }
-
-        //Create bar data set
-        BarDataSet barDataSet = new BarDataSet(barEntries, "Platforms");
-        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);    //Change bar colors
-
-        //Create bar data from bar data set
-        BarData barData = new BarData(barDataSet);
-
-        Description description = new Description();
-        description.setText("");
-
-        mPlatformBarChart.setData(barData);
-        mPlatformBarChart.getXAxis().setValueFormatter((value, axis) -> labels.get((int) value));   //Labels for X-Axis
-        mPlatformBarChart.setDescription(description);  //Set the description
-
-        //Hide all the axis in the chart
-        mPlatformBarChart.getXAxis().setDrawGridLines(false);
-        mPlatformBarChart.getXAxis().setDrawAxisLine(false);
-        mPlatformBarChart.getAxisLeft().setDrawGridLines(false);
-        mPlatformBarChart.getAxisLeft().setDrawAxisLine(false);
-        mPlatformBarChart.getAxisRight().setEnabled(false);
-
-        mPlatformBarChart.animateXY(Constants.GRAPH_ANIMATION_DURATION, Constants.GRAPH_ANIMATION_DURATION);    //Animate Chart
 
         //Refresh the bar chart
         mPlatformBarChart.invalidate();
