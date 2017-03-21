@@ -22,4 +22,5 @@
     <string name="sign_out">Sign Out</string>
     <string name="platforms">Platforms</string>
     <string name="browsers">Browsers</string>
+    <string name="referrers">Referrers</string>
 </resources>

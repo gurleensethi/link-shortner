@@ -15,17 +15,24 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Browser;
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Platform;
+import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Referrer;
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.StatsModel;
 import app.com.thetechnocafe.linkshortner.R;
 import app.com.thetechnocafe.linkshortner.Utilities.Constants;
@@ -54,6 +61,14 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
     ImageView mPlatformsErrorImageView;
     @BindView(R.id.browsers_error_image_view)
     ImageView mBrowsersErrorImageView;
+    @BindView(R.id.referrers_pie_chart)
+    PieChart mReferrersPieChart;
+    @BindView(R.id.referrers_error_image_view)
+    ImageView mReferrersErrorImageView;
+    @BindView(R.id.referrers_error_progress_bar)
+    ProgressBar mReferrersProgressBar;
+    @BindView(R.id.referrers_progress_frame_layout)
+    FrameLayout mReferrersProgressFrameLayout;
 
     public static final String EXTRA_SHORT_LINK = "short_link";
     private LinkStatsContract.Presenter mPresenter;
@@ -93,6 +108,7 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
     public void onLoadStats(StatsModel stats) {
         setUpPlatformBarChart(stats.getAnalytics().getAllTime().getPlatforms());
         setUpBrowsersBarChart(stats.getAnalytics().getAllTime().getBrowsers());
+        setUpReferrersPieChart(stats.getAnalytics().getAllTime().getReferrers());
     }
 
     @Override
@@ -101,8 +117,10 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
 
         mPlatformsProgressBar.setVisibility(View.GONE);
         mBrowsersProgressBar.setVisibility(View.GONE);
+        mReferrersProgressBar.setVisibility(View.GONE);
         mPlatformsErrorImageView.setVisibility(View.VISIBLE);
         mBrowsersErrorImageView.setVisibility(View.VISIBLE);
+        mReferrersErrorImageView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -228,5 +246,40 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
         //Toggle visibility of Progress and Content layout
         mBrowsersHorizontalBarChart.setVisibility(View.VISIBLE);
         mBrowsersProgressFrameLayout.setVisibility(View.GONE);
+    }
+
+    //Display the data set in a Pie Chart (MPChart Library)
+    private void setUpReferrersPieChart(List<Referrer> referrers) {
+        //Check if data is available
+        if (referrers == null) {
+            return;
+        }
+
+        List<PieEntry> pieEntries = new ArrayList<>();
+
+        for (int i = 0; i < referrers.size(); i++) {
+            Referrer referrer = referrers.get(i);
+
+            pieEntries.add(new PieEntry(Float.parseFloat(referrer.getCount()), referrer.getId()));
+        }
+
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
+        pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+
+        PieData pieData = new PieData(pieDataSet);
+        pieData.setValueFormatter(new PercentFormatter());
+
+        mReferrersPieChart.setEntryLabelTextSize(0f);
+        mReferrersPieChart.setData(pieData);
+
+        Description description = new Description();
+        description.setText("Referrers");
+        mReferrersPieChart.setDescription(description);     //Change the description
+
+        //Refresh the pie chart
+        mReferrersPieChart.invalidate();
+
+        mReferrersPieChart.setVisibility(View.VISIBLE);
+        mReferrersProgressFrameLayout.setVisibility(View.GONE);
     }
 }
