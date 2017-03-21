@@ -50,7 +50,10 @@ public class LinkStatsPresenter implements LinkStatsContract.Presenter {
                 .getStatsForShortLink(Constants.API_KEY, shortUrl, "FULL")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(statsModel -> mMainView.onLoadStats(statsModel));
+                .subscribe(statsModel -> mMainView.onLoadStats(statsModel),
+                        throwable -> {
+                            mMainView.onNetworkError();
+                        });
 
         compositeDisposable.add(disposable);
     }

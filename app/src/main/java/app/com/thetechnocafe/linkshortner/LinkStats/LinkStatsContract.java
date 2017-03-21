@@ -10,6 +10,8 @@ import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.StatsModel;
 public class LinkStatsContract {
     public interface View extends BaseMVP.View {
         void onLoadStats(StatsModel stats);
+
+        void onNetworkError();
     }
 
     public interface Presenter extends BaseMVP.Presenter<LinkStatsContract.View> {

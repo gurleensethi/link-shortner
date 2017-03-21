@@ -3,12 +3,16 @@ package app.com.thetechnocafe.linkshortner.LinkStats;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.Description;
@@ -30,6 +34,8 @@ import butterknife.ButterKnife;
 
 public class LinkStatsActivity extends AppCompatActivity implements LinkStatsContract.View {
 
+    @BindView(R.id.coordinator_layout)
+    CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.platforms_horizontal_bar_chart)
@@ -40,6 +46,14 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
     HorizontalBarChart mBrowsersHorizontalBarChart;
     @BindView(R.id.browsers_progress_frame_layout)
     FrameLayout mBrowsersProgressFrameLayout;
+    @BindView(R.id.platforms_error_progress_bar)
+    ProgressBar mPlatformsProgressBar;
+    @BindView(R.id.browsers_error_progress_bar)
+    ProgressBar mBrowsersProgressBar;
+    @BindView(R.id.platforms_error_image_view)
+    ImageView mPlatformsErrorImageView;
+    @BindView(R.id.browsers_error_image_view)
+    ImageView mBrowsersErrorImageView;
 
     public static final String EXTRA_SHORT_LINK = "short_link";
     private LinkStatsContract.Presenter mPresenter;
@@ -79,6 +93,16 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
     public void onLoadStats(StatsModel stats) {
         setUpPlatformBarChart(stats.getAnalytics().getAllTime().getPlatforms());
         setUpBrowsersBarChart(stats.getAnalytics().getAllTime().getBrowsers());
+    }
+
+    @Override
+    public void onNetworkError() {
+        Snackbar.make(mCoordinatorLayout, "Error while connecting to GoogleAPI", Snackbar.LENGTH_LONG).show();
+
+        mPlatformsProgressBar.setVisibility(View.GONE);
+        mBrowsersProgressBar.setVisibility(View.GONE);
+        mPlatformsErrorImageView.setVisibility(View.VISIBLE);
+        mBrowsersErrorImageView.setVisibility(View.VISIBLE);
     }
 
     @Override
