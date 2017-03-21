@@ -20,6 +20,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Browser;
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Platform;
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.StatsModel;
 import app.com.thetechnocafe.linkshortner.R;
@@ -35,6 +36,10 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
     HorizontalBarChart mPlatformHorizontalBarChart;
     @BindView(R.id.platforms_progress_frame_layout)
     FrameLayout mPlatformsProgressFrameLayout;
+    @BindView(R.id.browsers_horizontal_bar_chart)
+    HorizontalBarChart mBrowsersHorizontalBarChart;
+    @BindView(R.id.browsers_progress_frame_layout)
+    FrameLayout mBrowsersProgressFrameLayout;
 
     public static final String EXTRA_SHORT_LINK = "short_link";
     private LinkStatsContract.Presenter mPresenter;
@@ -73,6 +78,7 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
     @Override
     public void onLoadStats(StatsModel stats) {
         setUpPlatformBarChart(stats.getAnalytics().getAllTime().getPlatforms());
+        setUpBrowsersBarChart(stats.getAnalytics().getAllTime().getBrowsers());
     }
 
     @Override
@@ -147,5 +153,56 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
         //Toggle visibility of Progress and Content layout
         mPlatformHorizontalBarChart.setVisibility(View.VISIBLE);
         mPlatformsProgressFrameLayout.setVisibility(View.GONE);
+    }
+
+    //Display the data set in a Bar Chart (MPChart Library)
+    private void setUpBrowsersBarChart(List<Browser> browsers) {
+        //Check if data is available
+        if (browsers != null) {
+
+            //Create bar entries and bar labels
+            List<BarEntry> barEntries = new ArrayList<>();
+            List<String> labels = new ArrayList<>();
+
+            //Iterate over values and add values to barEntries and labels
+            for (int i = 0; i < browsers.size(); i++) {
+                Browser browser = browsers.get(i);
+                barEntries.add(new BarEntry((float) i, Float.parseFloat(browser.getCount())));
+                labels.add(browser.getId());
+            }
+
+            //Create bar data set
+            BarDataSet barDataSet = new BarDataSet(barEntries, "Browsers");
+            barDataSet.setColor(ContextCompat.getColor(this, R.color.md_blue_500));    //Change bar colors
+
+            //Create bar data from bar data set
+            BarData barData = new BarData(barDataSet);
+
+            Description description = new Description();
+            description.setText("");
+
+            mBrowsersHorizontalBarChart.setData(barData);
+            mBrowsersHorizontalBarChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+            mBrowsersHorizontalBarChart.setDescription(description);  //Set the description
+            mBrowsersHorizontalBarChart.getXAxis().setGranularityEnabled(true);
+            mBrowsersHorizontalBarChart.getXAxis().setGranularity(1f);
+
+            //Hide all the axis in the chart
+            mBrowsersHorizontalBarChart.getXAxis().setDrawGridLines(false);
+            mBrowsersHorizontalBarChart.getXAxis().setDrawAxisLine(false);
+            mBrowsersHorizontalBarChart.getAxisLeft().setDrawGridLines(false);
+            mBrowsersHorizontalBarChart.getAxisLeft().setDrawAxisLine(false);
+            mBrowsersHorizontalBarChart.getAxisRight().setEnabled(false);
+
+            mBrowsersHorizontalBarChart.animateXY(Constants.GRAPH_ANIMATION_DURATION, Constants.GRAPH_ANIMATION_DURATION);    //Animate Chart
+
+        }
+
+        //Refresh the bar chart
+        mBrowsersHorizontalBarChart.invalidate();
+
+        //Toggle visibility of Progress and Content layout
+        mBrowsersHorizontalBarChart.setVisibility(View.VISIBLE);
+        mBrowsersProgressFrameLayout.setVisibility(View.GONE);
     }
 }
