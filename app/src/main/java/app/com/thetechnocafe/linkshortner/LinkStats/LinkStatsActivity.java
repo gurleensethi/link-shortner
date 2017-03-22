@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Browser;
+import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Country;
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Platform;
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Referrer;
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.StatsModel;
@@ -53,9 +54,9 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
     HorizontalBarChart mBrowsersHorizontalBarChart;
     @BindView(R.id.browsers_progress_frame_layout)
     FrameLayout mBrowsersProgressFrameLayout;
-    @BindView(R.id.platforms_error_progress_bar)
+    @BindView(R.id.platforms_progress_bar)
     ProgressBar mPlatformsProgressBar;
-    @BindView(R.id.browsers_error_progress_bar)
+    @BindView(R.id.browsers_progress_bar)
     ProgressBar mBrowsersProgressBar;
     @BindView(R.id.platforms_error_image_view)
     ImageView mPlatformsErrorImageView;
@@ -65,10 +66,18 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
     PieChart mReferrersPieChart;
     @BindView(R.id.referrers_error_image_view)
     ImageView mReferrersErrorImageView;
-    @BindView(R.id.referrers_error_progress_bar)
+    @BindView(R.id.referrers_progress_bar)
     ProgressBar mReferrersProgressBar;
     @BindView(R.id.referrers_progress_frame_layout)
     FrameLayout mReferrersProgressFrameLayout;
+    @BindView(R.id.country_horizontal_bar_chart)
+    HorizontalBarChart mCountryHorizontalBarChart;
+    @BindView(R.id.country_error_image_view)
+    ImageView mCountryErrorImageView;
+    @BindView(R.id.country_progress_frame_layout)
+    FrameLayout mCountryProgressFrameLayout;
+    @BindView(R.id.country_progress_bar)
+    ProgressBar mCountryProgressBar;
 
     public static final String EXTRA_SHORT_LINK = "short_link";
     private LinkStatsContract.Presenter mPresenter;
@@ -109,6 +118,7 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
         setUpPlatformBarChart(stats.getAnalytics().getAllTime().getPlatforms());
         setUpBrowsersBarChart(stats.getAnalytics().getAllTime().getBrowsers());
         setUpReferrersPieChart(stats.getAnalytics().getAllTime().getReferrers());
+        setUpCountryBarChart(stats.getAnalytics().getAllTime().getCountries());
     }
 
     @Override
@@ -118,9 +128,11 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
         mPlatformsProgressBar.setVisibility(View.GONE);
         mBrowsersProgressBar.setVisibility(View.GONE);
         mReferrersProgressBar.setVisibility(View.GONE);
+        mCountryProgressBar.setVisibility(View.GONE);
         mPlatformsErrorImageView.setVisibility(View.VISIBLE);
         mBrowsersErrorImageView.setVisibility(View.VISIBLE);
         mReferrersErrorImageView.setVisibility(View.VISIBLE);
+        mCountryErrorImageView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -281,5 +293,56 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
 
         mReferrersPieChart.setVisibility(View.VISIBLE);
         mReferrersProgressFrameLayout.setVisibility(View.GONE);
+    }
+
+    //Display the data set in a Horizontal Bar Chart(MP Chart Library)
+    private void setUpCountryBarChart(List<Country> countries) {
+        //Check if data is available
+        if (countries != null) {
+
+            //Create bar entries and bar labels
+            List<BarEntry> barEntries = new ArrayList<>();
+            List<String> labels = new ArrayList<>();
+
+            //Iterate over values and add values to barEntries and labels
+            for (int i = 0; i < countries.size(); i++) {
+                Country country = countries.get(i);
+                barEntries.add(new BarEntry((float) i, Float.parseFloat(country.getCount())));
+                labels.add(country.getId());
+            }
+
+            //Create bar data set
+            BarDataSet barDataSet = new BarDataSet(barEntries, "Country");
+            barDataSet.setColor(ContextCompat.getColor(this, R.color.md_blue_500));    //Change bar colors
+
+            //Create bar data from bar data set
+            BarData barData = new BarData(barDataSet);
+
+            Description description = new Description();
+            description.setText("");
+
+            mCountryHorizontalBarChart.setData(barData);
+            mCountryHorizontalBarChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+            mCountryHorizontalBarChart.setDescription(description);  //Set the description
+            mCountryHorizontalBarChart.getXAxis().setGranularityEnabled(true);
+            mCountryHorizontalBarChart.getXAxis().setGranularity(1f);
+
+            //Hide all the axis in the chart
+            mCountryHorizontalBarChart.getXAxis().setDrawGridLines(false);
+            mCountryHorizontalBarChart.getXAxis().setDrawAxisLine(false);
+            mCountryHorizontalBarChart.getAxisLeft().setDrawGridLines(false);
+            mCountryHorizontalBarChart.getAxisLeft().setDrawAxisLine(false);
+            mCountryHorizontalBarChart.getAxisRight().setEnabled(false);
+
+            mCountryHorizontalBarChart.animateXY(Constants.GRAPH_ANIMATION_DURATION, Constants.GRAPH_ANIMATION_DURATION);    //Animate Chart
+
+        }
+
+        //Refresh the bar chart
+        mCountryHorizontalBarChart.invalidate();
+
+        //Toggle visibility of Progress and Content layout
+        mCountryHorizontalBarChart.setVisibility(View.VISIBLE);
+        mCountryProgressFrameLayout.setVisibility(View.GONE);
     }
 }
