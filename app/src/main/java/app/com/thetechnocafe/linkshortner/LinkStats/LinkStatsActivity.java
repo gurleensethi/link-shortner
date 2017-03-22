@@ -8,11 +8,17 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -27,8 +33,11 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Browser;
 import app.com.thetechnocafe.linkshortner.Models.LinkStatsModel.Country;
@@ -78,9 +87,20 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
     FrameLayout mCountryProgressFrameLayout;
     @BindView(R.id.country_progress_bar)
     ProgressBar mCountryProgressBar;
+    @BindView(R.id.original_link_text_view)
+    TextView mOriginalLinkTextView;
+    @BindView(R.id.short_link_text_view)
+    TextView mShortLinkTextView;
+    @BindView(R.id.time_ago_text_view)
+    TextView mTimeAgoTextView;
+    @BindView(R.id.general_stats_relative_layout)
+    RelativeLayout mGeneralStatsRelativeLayout;
+    @BindView(R.id.linear_layout)
+    LinearLayout mLinearLayout;
 
     public static final String EXTRA_SHORT_LINK = "short_link";
     private LinkStatsContract.Presenter mPresenter;
+    private StatsModel STATS_MODEL;
 
     public static Intent getIntent(Context context, String shortLink) {
         Intent intent = new Intent(context, LinkStatsActivity.class);
@@ -115,6 +135,41 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
 
     @Override
     public void onLoadStats(StatsModel stats) {
+        STATS_MODEL = stats;
+
+        //Set the general stats
+        mShortLinkTextView.setText(stats.getId());
+
+        //Set original link
+        SpannableString originalLinkSpannableString = new SpannableString(" " + stats.getLongUrl());
+        originalLinkSpannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.md_blue_500)), 0, originalLinkSpannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mOriginalLinkTextView.append(originalLinkSpannableString);
+
+        //Convert date to string
+        //Convert date to long
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+        long time = 0l;
+        try {
+            time = simpleDateFormat.parse(stats.getCreated().split("\\.")[0]).getTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        long timeDifference = new Date().getTime() - time;
+        String timeString = "Created ";
+        if (TimeUnit.MILLISECONDS.toDays(timeDifference) > 0) {
+            timeString += TimeUnit.MILLISECONDS.toDays(timeDifference) + " days ago";
+        } else if (TimeUnit.MILLISECONDS.toMinutes(timeDifference) > 0) {
+            timeString += TimeUnit.MILLISECONDS.toMinutes(timeDifference) + " minutes ago";
+        } else if (TimeUnit.MILLISECONDS.toSeconds(timeDifference) > 0) {
+            timeString += TimeUnit.MILLISECONDS.toSeconds(timeDifference) + " seconds ago";
+        }
+        mTimeAgoTextView.setText(timeString);
+
+        //Animate and show layout
+        mGeneralStatsRelativeLayout.setVisibility(View.VISIBLE);
+
+        //Set up the charts
         setUpPlatformBarChart(stats.getAnalytics().getAllTime().getPlatforms());
         setUpBrowsersBarChart(stats.getAnalytics().getAllTime().getBrowsers());
         setUpReferrersPieChart(stats.getAnalytics().getAllTime().getReferrers());

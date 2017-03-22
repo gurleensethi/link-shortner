@@ -28,9 +28,54 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
+            android:id="@+id/linear_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/general_stats_relative_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/md_blue_grey_100"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/analytics_data_for"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Analytics data for "
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/short_link_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/analytics_data_for"
+                    android:text="http://somelink/xyzlin"
+                    android:textColor="@color/md_blue_500"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/time_ago_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/analytics_data_for"
+                    android:layout_marginTop="4dp"
+                    android:text="Created 7 days ago"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/original_link_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/time_ago_text_view"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/original_link"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -130,10 +175,10 @@
                         <ImageView
                             android:id="@+id/browsers_error_image_view"
                             android:layout_width="wrap_content"
-                            android:visibility="gone"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_error" />
+                            android:src="@drawable/ic_error"
+                            android:visibility="gone" />
 
                     </FrameLayout>
 
@@ -184,10 +229,10 @@
                         <ImageView
                             android:id="@+id/referrers_error_image_view"
                             android:layout_width="wrap_content"
-                            android:visibility="gone"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_error" />
+                            android:src="@drawable/ic_error"
+                            android:visibility="gone" />
 
                     </FrameLayout>
 
@@ -238,10 +283,10 @@
                         <ImageView
                             android:id="@+id/country_error_image_view"
                             android:layout_width="wrap_content"
-                            android:visibility="gone"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_error" />
+                            android:src="@drawable/ic_error"
+                            android:visibility="gone" />
 
                     </FrameLayout>
 
