@@ -97,6 +97,10 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
     RelativeLayout mGeneralStatsRelativeLayout;
     @BindView(R.id.linear_layout)
     LinearLayout mLinearLayout;
+    @BindView(R.id.total_short_url_clicks_text_view)
+    TextView mTotalShortUrlClicksTextView;
+    @BindView(R.id.total_long_url_clicks_text_view)
+    TextView mTotalLongUrlClicksTextView;
 
     public static final String EXTRA_SHORT_LINK = "short_link";
     private LinkStatsContract.Presenter mPresenter;
@@ -138,6 +142,8 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
         STATS_MODEL = stats;
 
         //Set the general stats
+        mTotalShortUrlClicksTextView.setText(String.valueOf(stats.getAnalytics().getAllTime().getShortUrlClicks()));
+        mTotalLongUrlClicksTextView.setText(String.valueOf(stats.getAnalytics().getAllTime().getLongUrlClicks()));
         mShortLinkTextView.setText(stats.getId());
 
         //Set original link
