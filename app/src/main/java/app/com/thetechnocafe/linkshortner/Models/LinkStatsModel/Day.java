@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import okhttp3.internal.platform.Platform;
+
 
 /**
  * Created by gurleensethi on 19/03/17.
