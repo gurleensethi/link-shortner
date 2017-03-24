@@ -81,7 +81,10 @@ public class AllLinksActivity extends AppCompatActivity implements AllLinksContr
         if (mAllLinksRecyclerAdapter == null) {
             mAllLinksRecyclerAdapter = new AllLinksRecyclerAdapter(this, shortLinks);
             mShortLinksRecyclerView.setAdapter(mAllLinksRecyclerAdapter);
-            mAllLinksRecyclerAdapter.setOnLinkClickListener(shortLink -> startActivity(LinkStatsActivity.getIntent(AllLinksActivity.this, shortLink.getId())));
+            mAllLinksRecyclerAdapter.setOnLinkClickListener(shortLink -> {
+                startActivity(LinkStatsActivity.getIntent(AllLinksActivity.this, shortLink.getId()));
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            });
 
         } else {
             mAllLinksRecyclerAdapter.notifyDataSetChanged();
@@ -93,9 +96,16 @@ public class AllLinksActivity extends AppCompatActivity implements AllLinksContr
         switch (item.getItemId()) {
             case android.R.id.home: {
                 finish();
+                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
                 return true;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 }

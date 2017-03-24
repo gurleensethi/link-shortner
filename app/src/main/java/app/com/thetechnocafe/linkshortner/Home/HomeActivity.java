@@ -110,6 +110,7 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
 
         mViewAllLinksLinearLayout.setOnClickListener(view -> {
             startActivity(AllLinksActivity.getIntent(getApplicationContext()));
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         });
 
         mShortenLinkImageButton.setOnClickListener(view -> {

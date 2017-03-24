@@ -275,6 +275,7 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
         switch (item.getItemId()) {
             case android.R.id.home: {
                 finish();
+                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
                 return true;
             }
         }
@@ -478,5 +479,11 @@ public class LinkStatsActivity extends AppCompatActivity implements LinkStatsCon
         //Toggle visibility of Progress and Content layout
         mCountryHorizontalBarChart.setVisibility(View.VISIBLE);
         mCountryProgressFrameLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 }
