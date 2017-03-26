@@ -130,11 +130,13 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
             toggleProgress(true);
             hideSoftKeyboard();
 
+            mLinkEditText.setEnabled(false);
+
             mPresenter.shortenUrl(longUrl);
         });
 
         //Configure Swipe refresh layout
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.md_red_500, R.color.md_blue_500, R.color.md_green_500, R.color.md_yellow_500, R.color.md_white_1000);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.md_red_500, R.color.md_blue_500, R.color.md_green_500, R.color.md_yellow_500);
         mSwipeRefreshLayout.setOnRefreshListener(() -> mPresenter.reloadLinks());
 
     }
@@ -189,6 +191,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
 
     @Override
     public void onLinkShortened(String shortUrl, String longUrl) {
+        mLinkEditText.setEnabled(true);
+
         mOriginalLinkTextView.setText(longUrl);
         mShortenedLinkTextView.setText(shortUrl);
 
@@ -223,6 +227,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
 
     @Override
     public void onLinkShortenError() {
+        mLinkEditText.setEnabled(false);
+
         toggleProgress(false);
         Snackbar.make(mLinearLayout, "Unable to shorten link", Snackbar.LENGTH_SHORT).show();
     }
