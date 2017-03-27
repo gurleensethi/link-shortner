@@ -26,7 +26,12 @@
         <activity android:name=".LinkWithoutAccount.LinkWithoutAccountActivity" />
         <activity android:name=".Home.HomeActivity" />
         <activity android:name=".AllLinks.AllLinksActivity" />
-        <activity android:name=".LinkStats.LinkStatsActivity"></activity>
+        <activity android:name=".LinkStats.LinkStatsActivity" />
+
+        <service
+            android:name=".Services.ClipboardChangeListenerService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

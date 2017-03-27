@@ -35,6 +35,7 @@ import app.com.thetechnocafe.linkshortner.Adapters.LinksRecyclerAdapter;
 import app.com.thetechnocafe.linkshortner.AllLinks.AllLinksActivity;
 import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortLink;
 import app.com.thetechnocafe.linkshortner.R;
+import app.com.thetechnocafe.linkshortner.Services.ClipboardChangeListenerService;
 import app.com.thetechnocafe.linkshortner.SignIn.SignInActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -139,6 +140,9 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
         mSwipeRefreshLayout.setColorSchemeResources(R.color.md_red_500, R.color.md_blue_500, R.color.md_green_500, R.color.md_yellow_500);
         mSwipeRefreshLayout.setOnRefreshListener(() -> mPresenter.reloadLinks());
 
+        //Start the clipboard change listener service
+        Intent intent = new Intent(this, ClipboardChangeListenerService.class);
+        startService(intent);
     }
 
     @Override
