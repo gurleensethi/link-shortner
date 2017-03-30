@@ -115,7 +115,7 @@ public class ClipboardChangeListenerService extends Service implements Clipboard
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mFloatingView != null) {
+        if (mFloatingView.getParent() != null) {
             mWindowManager.removeView(mFloatingView);
         }
     }

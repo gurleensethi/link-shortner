@@ -55,7 +55,10 @@ public class LinkWithoutAccountPresenter implements LinkWithoutAccountContract.P
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(shortenedLinkModel -> mMainView.onLinkShortened(shortenedLinkModel.getId(), shortenedLinkModel.getLongUrl()),
-                        throwable -> mMainView.onLinkShortenedError(throwable.toString())
+                        throwable -> {
+                            mMainView.onLinkShortenedError(throwable.toString());
+                            throwable.printStackTrace();
+                        }
                 );
 
         //Add disposable to composite disposable

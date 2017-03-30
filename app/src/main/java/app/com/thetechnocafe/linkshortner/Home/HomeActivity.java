@@ -309,6 +309,10 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_sign_out: {
+                //Stop the service
+                Intent serviceIntent = new Intent(this, ClipboardChangeListenerService.class);
+                stopService(serviceIntent);
+
                 mPresenter.signOut();
 
                 //Start the sign in activity
