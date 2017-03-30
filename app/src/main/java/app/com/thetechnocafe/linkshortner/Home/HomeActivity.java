@@ -177,6 +177,9 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
             mLinksRecyclerView.setVisibility(View.VISIBLE);
             mNoShortenedLinksTextView.setVisibility(View.GONE);
 
+            //Hide swife refresh layout
+            mSwipeRefreshLayout.setRefreshing(false);
+
             //Send data to recycler view
             setUpOrRefreshRecyclerView(shortLinks);
         } else {
