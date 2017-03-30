@@ -91,7 +91,6 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
         ButterKnife.bind(this);
 
         mAccountManager = AccountManager.get(this);
-        requestPermissions(new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, 0);
 
         mPresenter = new HomePresenter();
         mPresenter.attachView(this);
