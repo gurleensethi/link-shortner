@@ -8,10 +8,14 @@ import app.com.thetechnocafe.linkshortner.BaseMVP;
 
 public class ClipboardChangeListenerContract {
     public interface View extends BaseMVP.View {
+        void onLinkShortened(String shortLink);
 
+        void requestTokenAndShortenLink(String oldToken, String accountName);
     }
 
     public interface Presenter extends BaseMVP.Presenter<ClipboardChangeListenerContract.View> {
+        void saveTokenAndShortenLink(String token, String longUrl);
 
+        void requestNewTokenAndShortenLink();
     }
 }

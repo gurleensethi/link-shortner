@@ -46,4 +46,5 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     testCompile 'junit:junit:4.12'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
 }
