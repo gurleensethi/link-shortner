@@ -1,13 +1,15 @@
 package app.com.thetechnocafe.linkshortner.Home;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -29,11 +31,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.List;
 
 import app.com.thetechnocafe.linkshortner.Adapters.LinksRecyclerAdapter;
 import app.com.thetechnocafe.linkshortner.AllLinks.AllLinksActivity;
+import app.com.thetechnocafe.linkshortner.Dialogs.RequestPermissionDialog;
 import app.com.thetechnocafe.linkshortner.Models.UrlListModels.ShortLink;
 import app.com.thetechnocafe.linkshortner.R;
 import app.com.thetechnocafe.linkshortner.Services.ClipboardChangeListenerService;
@@ -82,6 +84,8 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
     private LinksRecyclerAdapter mLinksRecyclerAdapter;
     private AccountManager mAccountManager;
     private static final String CLIPBOARD_SHORT_LINK_LABEL = "shortened link";
+    private static final String TAG_REQUEST_PERMISSION_DIALOG = "request_permission_dialog";
+    private static final int RC_OVERLAY_PERMISSION = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +148,18 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
         //Start the clipboard change listener service
         Intent intent = new Intent(this, ClipboardChangeListenerService.class);
         startService(intent);
+
+        //Check for permissions and start the dialog
+        if (!canOverlayOverWindow()) {
+            //Create request permission dialog and start it
+            RequestPermissionDialog dialog = RequestPermissionDialog.getInstance();
+            dialog.show(getSupportFragmentManager(), TAG_REQUEST_PERMISSION_DIALOG);
+            dialog.addOnActionListener(() -> {
+                Intent settingsIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(settingsIntent, RC_OVERLAY_PERMISSION);
+            });
+        }
     }
 
     @Override
@@ -347,5 +363,12 @@ public class HomeActivity extends AppCompatActivity implements HomeContract.View
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    private boolean canOverlayOverWindow() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return true;
+        }
+        return Settings.canDrawOverlays(getApplicationContext());
     }
 }

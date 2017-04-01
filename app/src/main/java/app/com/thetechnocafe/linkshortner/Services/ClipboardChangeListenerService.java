@@ -8,8 +8,10 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -46,18 +48,24 @@ public class ClipboardChangeListenerService extends Service implements Clipboard
         if (clipboardManager.hasPrimaryClip()) {
             String primaryClip = clipboardManager.getPrimaryClip().getItemAt(0).getText().toString().trim();
 
-            //Check if the copied text is a valid long link and not a non-link of (Google shortened link)
-            if (!primaryClip.startsWith(Constants.URL_GOO_GL) && (primaryClip.startsWith(Constants.HTTP) || primaryClip.startsWith(Constants.HTTPS) || primaryClip.startsWith(Constants.WWW))) {
-                //Save the current long url
-                mCurrentLongUrl = primaryClip;
-                //Notify the user
-                Toast.makeText(getAppContext(), "Click to shorten link", Toast.LENGTH_SHORT).show();
+            //Check for SYSTEM_ALERT_WINDOW PERMISSION
+            if (canOverlayOverWindow()) {
 
-                //Show the floating view
-                if (mFloatingView.getParent() != null) {
-                    mWindowManager.removeView(mFloatingView);
+                //Check if the copied text is a valid long link and not a non-link of (Google shortened link)
+                if (!primaryClip.startsWith(Constants.URL_GOO_GL) && (primaryClip.startsWith(Constants.HTTP) || primaryClip.startsWith(Constants.HTTPS) || primaryClip.startsWith(Constants.WWW))) {
+                    //Save the current long url
+                    mCurrentLongUrl = primaryClip;
+                    //Notify the user
+                    Toast.makeText(getAppContext(), "Click to shorten link", Toast.LENGTH_SHORT).show();
+
+                    //Show the floating view
+                    if (mFloatingView.getParent() != null) {
+                        mWindowManager.removeView(mFloatingView);
+                    }
+                    mWindowManager.addView(mFloatingView, params);
                 }
-                mWindowManager.addView(mFloatingView, params);
+            } else {
+                Toast.makeText(getApplicationContext(), "Please grant system permissions to Link Shortener by going to Settings -> Apps -> Draw over other apps", Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -241,5 +249,12 @@ public class ClipboardChangeListenerService extends Service implements Clipboard
         clipboardManager.setPrimaryClip(clipData);
 
         Toast.makeText(getApplicationContext(), "Short link copied to clipboard : " + shortLink, Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean canOverlayOverWindow() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return true;
+        }
+        return Settings.canDrawOverlays(getApplicationContext());
     }
 }

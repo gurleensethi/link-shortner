@@ -24,4 +24,5 @@
     <string name="browsers">Browsers</string>
     <string name="referrers">Referrers</string>
     <string name="country">Country</string>
+    <string name="permission_required">Permission Required</string>
 </resources>
